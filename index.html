@@ -17,32 +17,51 @@
 
 </head>
 <body>
+    
     <nav id="navbar" class="nav">
         <select id="countries" name="Choose country">
         </select>
-             <div id="btnDiv" class="container">
-             <!-- Button more info -->
-                <button id="btnInfo" type="button" class="btn btn-primary" data-toggle="moreInfo" data-target="#infoModal">More info</button>
-             </div>
-             <div id='results'>
-                        <h4>Flag <span id='country-flag'></span></span></h4>
-                        <h4>Continent: <span class="bold" id="continent"></span> </h4>
-                        <h4>Capital: <span class="bold" id="capital"></span> </h4>
-                        <h4>Currency: <span class="bold" id="txtLanguages"></span> </h4>
-                        <h4>Population: <span class="bold" id="population"></span> </h4>
-                        <h4>Area (km<sup>2</sup>): <span class="bold" id="area"></span> </h4>
-                        <h4>Temperature: <span class="bold" id="temperature"></span> </h4>
-                        <h4>Humidity: <span class="bold" id="humidity"></span></h4>
-                        <h4>Wikipedia: <span class="bold" id="population"></span></h4>
-                        <button type="button" class="btn btn-secondary" data-dismiss="moreInfo">Close</button>
-             </div>
+        <button id="btnInfo" type="button" class="btn btn-primary" data-toggle="modal" data-target="#infoModal"
+            style="margin-left: 3px; width: 120px;">More info</button>
     </nav>
+             <div class="modal fade" id="infoModal" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable">
+                    <div class="modal-content">
+            <div class="modal-body"> 
+                <p id="country-flag"></p>
+                <p class="card-text">Continent: <span class="bold" id="continent"></span></p>
+                <p class="card-text">Capital: <span class="bold" id="capital"></span></p>
+                <p class="card-text">Currency: <span class="bold" id="exchangeTitle"></span></p>
+                <p class="card-text">Currency Exchange: <span class="bold" id="exchangeRate"></span></p>
+                <p class="card-text">Population: <span class="bold" id="population"></span></p>
+                <p class="card-text">Area (km<sup>2</sup>): <span class="bold" id="area"></span></p>
+                <p class="card-text">Temperature: <span class="bold" id="temperature"></span></p>
+                <p class="card-text">Humidity: <span class="bold" id="humidity"></span></p>
+                <p class="card-text">Wikipedia: <a href="#" id="wikipedia" target="_blank"></a></p>
+                <p class="card-text"><small class="text-muted"></small></p>
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            </div>
+                    </div>
+                </div>
+             </div>
+
+    <span rel="popover"></span>
+
 
     <div id="mapid"></div>
     
     <!-- import jQuery -->
     <script src="./libs/js/jquery-3.5.1.min.js"></script>
    
+   <!-- import popper -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+    integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+    crossorigin="anonymous"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+    integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+    crossorigin="anonymous"></script>
+
    <!-- functions -->
     <script src="./libs/js/script.js"></script>
 

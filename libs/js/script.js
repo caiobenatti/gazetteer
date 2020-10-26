@@ -1,10 +1,12 @@
-var locationMarker;
-var lat = 0, long = 0, country_name = 'India', mymap, country_alpaname = 'Ind', currency_code = 'INR', capital_city = 'delhi';
-var rest_countries; // will contain "fetched" data
-var latLngBounds;
-var timeZones;
-var borderLayer;
-var layerGroup;
+//starting variables for fetching data;
+let locationMarker;
+let lat;
+let long;
+let country_name;
+let rest_countries; 
+let latLngBounds;
+let borderLayer;
+let layerGroup;
 
 
 navigator.geolocation.getCurrentPosition((position) => {
@@ -35,6 +37,8 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     noWrap: true,
     zoomOffset: -1
 }).addTo(mymap);
+
+$('#results').hide()
 
   layerGroup = new L.LayerGroup();
   layerGroup.addTo(mymap);
@@ -76,6 +80,7 @@ function setCountryInfo(result) {
     lng = (result['data'][0]['north'] + result['data'][0]['south']) / 2;
     lat = (result['data'][0]['east'] + result['data'][0]['west']) / 2;
     $('#area').html(`${result['data'][0]['areaInSqKm']} km<sup>2</sup>`);
+    $('#wikipedia').html(`https://en.wikipedia.org/wiki/${country_name}`)
   }
 
 
@@ -92,12 +97,13 @@ $('#countries').change(function(){
         success: function(result){
             console.log(result);
             if(result.status.code == 200){
-              setFlag($('#selectCountry').val());
+              setFlag($('#countries').val());
                setCountryInfo(result);
                getWeatherData()
                if(borderLayer){
                 layerGroup.removeLayer(borderLayer);}
                applyCountryBorder(mymap, country_name);
+               getExchangeRateData()
             }
         },
         error: function(jqXHR, textStatus, errorThrown){
@@ -128,46 +134,29 @@ function applyCountryBorder(map, countryname) {
       mymap.fitBounds([
         [parseFloat(latLngBounds[0]), parseFloat(latLngBounds[2])],
         [parseFloat(latLngBounds[1]), parseFloat(latLngBounds[3])]]);
-      bounds = mymap.fitBounds([
-        [parseFloat(latLngBounds[0]), parseFloat(latLngBounds[2])],
-        [parseFloat(latLngBounds[1]), parseFloat(latLngBounds[3])]]);
-         map.flyToBounds(bounds.getBounds(), {
-                            animate: true,
-                            duration: 2.5
-                        });
     });
     
 
 };
-    
-function applyCountryBorder(map, countryname) {
+
+function getExchangeRateData() {
     $.ajax({
-      type: "GET",
-      dataType: "json",
-      url:
-        "https://nominatim.openstreetmap.org/search?country=" +
-        countryname.trim() +
-        "&polygon_geojson=1&format=json"
-    })
-    .then(function (data) {
-      latLngBounds = data[0].boundingbox;
-      borderLayer = L.geoJSON(data[0].geojson, {
-        color: "blue",
-        weight: 2,
-        opacity: 1,
-        fillOpacity: 0.0
-      }).addTo(mymap);
-      layerGroup.addLayer(borderLayer);
-      mymap.fitBounds([
-        [parseFloat(latLngBounds[0]), parseFloat(latLngBounds[2])],
-        [parseFloat(latLngBounds[1]), parseFloat(latLngBounds[3])]]);
+        url: "libs/php/getExchange.php",
+        type: 'GET',
+        dataType: 'json',
+          success: function(result){
+            if(result){
+                console.log(result);
+                $('#exchangeTitle').html(`USD/${currency} XR: `);
+                $('#exchangeRate').html(`${Math.floor(result['data']['rates']['currency'] / result['data']['rates']['USD'])}`);
+                 
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            alert(`Error in exchange: ${textStatus} ${errorThrown} ${jqXHR}`);
+        }
     });
-
-
 }
-
-
-
 
 
 function getWeatherData(){
@@ -206,5 +195,6 @@ function setCountry(countryName) {
 }
 
 function setFlag(iso2code) {
-    $('#country-flag').html(`<img src="https://www.countryflags.io/${iso2code}/shiny/64.png"></img>`);
+    $('#country-flag').html(`<img src="https://www.countryflags.io/${iso2code}/flat/64.png">`);
 }
+

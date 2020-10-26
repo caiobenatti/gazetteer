@@ -37,27 +37,18 @@ body,
 }
 
 #countries {
-  appearance: none;
-  border: none;
-  outline: none;
-  background: none;
-  background-color: rgba(255, 255, 255);
-  border-radius: 0px 16px 0px 16px;
+  background-color: lightgrey;
+  height: 3rem;
 }
 
 nav {
-  margin-top: 4%;
+  margin-top: auto;
   position: absolute;
   z-index: 1;
-}
-
-#btnInfo {
-  position: relative;
   float: right;
-}
-
-#results {
-  background-color: white;
+  cursor: pointer;
+  background-color: lightgrey;
+  width: 100%;
 }
 
 @-webkit-keyframes animate-preloader {

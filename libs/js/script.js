@@ -30,8 +30,10 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
 			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
 		id: 'mapbox/streets-v11',
-		tileSize: 512,
-        zoomOffset: -1
+    tileSize: 512,
+    continuousWorld: false,
+    noWrap: true,
+    zoomOffset: -1
 }).addTo(mymap);
 
   layerGroup = new L.LayerGroup();
@@ -93,6 +95,8 @@ $('#countries').change(function(){
               setFlag($('#selectCountry').val());
                setCountryInfo(result);
                getWeatherData()
+               if(borderLayer){
+                layerGroup.removeLayer(borderLayer);}
                applyCountryBorder(mymap, country_name);
             }
         },
@@ -116,21 +120,24 @@ function applyCountryBorder(map, countryname) {
       latLngBounds = [data[0].boundingbox];
       borderLayer = L.geoJSON([data[0].geojson], {
         color: "blue",
-        weight: 2,
-        opacity: 1,
+        weight: 5,
+        opacity: 0.9,
         fillOpacity: 0.0
       }).addTo(mymap);
       layerGroup.addLayer(borderLayer);
       mymap.fitBounds([
         [parseFloat(latLngBounds[0]), parseFloat(latLngBounds[2])],
         [parseFloat(latLngBounds[1]), parseFloat(latLngBounds[3])]]);
+      bounds = mymap.fitBounds([
+        [parseFloat(latLngBounds[0]), parseFloat(latLngBounds[2])],
+        [parseFloat(latLngBounds[1]), parseFloat(latLngBounds[3])]]);
+         map.flyToBounds(bounds.getBounds(), {
+                            animate: true,
+                            duration: 2.5
+                        });
     });
-      L.geoJSON(data[0].geojson, {
-        color: "green",
-        weight: 14,
-        opacity: 1,
-        fillOpacity: 0.0 
-      }).addTo(map);
+    
+
 };
     
 function applyCountryBorder(map, countryname) {

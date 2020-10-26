@@ -7,6 +7,7 @@ let rest_countries;
 let latLngBounds;
 let borderLayer;
 let layerGroup;
+let currency;
 
 
 navigator.geolocation.getCurrentPosition((position) => {
@@ -27,18 +28,17 @@ var mymap = L.map('mapid').setView([51.505, -0.09], 13);
 
 //initialize map
 L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY2JlbmF0dGkiLCJhIjoiY2tnbjBtYnlzMTg4OTJ1bmFqZzBqNnRtNCJ9.UDgPFngvQmeW3XbRk16-wQ', {
-		maxZoom: 18,
-		attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-			'<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-			'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-		id: 'mapbox/streets-v11',
+    maxZoom: 18,
+    attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+      '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+      'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+    id: 'mapbox/streets-v11',
     tileSize: 512,
     continuousWorld: false,
     noWrap: true,
     zoomOffset: -1
 }).addTo(mymap);
 
-$('#results').hide()
 
   layerGroup = new L.LayerGroup();
   layerGroup.addTo(mymap);
@@ -73,7 +73,6 @@ function setCountryInfo(result) {
     capital = result['data'][0]['capital'];
     currency = result['data'][0]['currencyCode'];
     country_name = result['data'][0]['countryName'];
-  	setCountry(result['data'][0]['countryName'])
     $('#capital').html(capital);
     $('#languages').html(result['data'][0]['languages']);
     $('#population').html(result['data'][0]['population']);
@@ -100,8 +99,6 @@ $('#countries').change(function(){
               setFlag($('#countries').val());
                setCountryInfo(result);
                getWeatherData()
-               if(borderLayer){
-                layerGroup.removeLayer(borderLayer);}
                applyCountryBorder(mymap, country_name);
                getExchangeRateData()
             }
@@ -111,7 +108,6 @@ $('#countries').change(function(){
         }
     });
 });
-
 
 function applyCountryBorder(map, countryname) {
     $.ajax({
@@ -123,11 +119,11 @@ function applyCountryBorder(map, countryname) {
         "&polygon_geojson=1&format=json"
     })
     .then(function (data) {
-      latLngBounds = [data[0].boundingbox];
-      borderLayer = L.geoJSON([data[0].geojson], {
+      latLngBounds = data[0].boundingbox;
+      borderLayer = L.geoJSON(data[0].geojson, {
         color: "blue",
-        weight: 5,
-        opacity: 0.9,
+        weight: 2,
+        opacity: 1,
         fillOpacity: 0.0
       }).addTo(mymap);
       layerGroup.addLayer(borderLayer);
@@ -135,9 +131,9 @@ function applyCountryBorder(map, countryname) {
         [parseFloat(latLngBounds[0]), parseFloat(latLngBounds[2])],
         [parseFloat(latLngBounds[1]), parseFloat(latLngBounds[3])]]);
     });
-    
 
-};
+
+}
 
 function getExchangeRateData() {
     $.ajax({
@@ -147,8 +143,8 @@ function getExchangeRateData() {
           success: function(result){
             if(result){
                 console.log(result);
-                $('#exchangeTitle').html(`USD/${currency} XR: `);
-                $('#exchangeRate').html(`${Math.floor(result['data']['rates']['currency'] / result['data']['rates']['USD'])}`);
+                $('#exchangeTitle').html(`USD/${currency}`);
+                $('#exchangeRate').html(`${result['data']['rates']['currency']}`);
                  
             }
         },
@@ -184,17 +180,12 @@ function getWeatherData(){
 }
 
 function updateMarker(lng, lat){
-    if(locationMarker != undefined){
-        mymap.removeLayer(locationMarker);
-    }
-    locationMarker = L.marker([lng, lat]).addTo(mymap);
-};
+     if(borderLayer){
+        layerGroup.removeLayer(borderLayer);}
+    borderLayer = L.marker([lng, lat]).addTo(mymap);
 
-function setCountry(countryName) {
-    $('#countryName').html(countryName);
-}
+};
 
 function setFlag(iso2code) {
     $('#country-flag').html(`<img src="https://www.countryflags.io/${iso2code}/flat/64.png">`);
 }
-

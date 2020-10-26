@@ -59,10 +59,10 @@ function setCountryInfo(result) {
   	setCountry(result['data'][0]['countryName'])
     $('#capital').html(capital);
     $('#languages').html(result['data'][0]['languages']);
-    $('#population').html(formatPopulation(result['data'][0]['population']));
+    $('#population').html(result['data'][0]['population']);
     lng = (result['data'][0]['north'] + result['data'][0]['south']) / 2;
     lat = (result['data'][0]['east'] + result['data'][0]['west']) / 2;
-    $('#area').html(`${formatArea(result['data'][0]['areaInSqKm'])} km<sup>2</sup>`);
+    $('#area').html(`${result['data'][0]['areaInSqKm']} km<sup>2</sup>`);
   }
 
 
@@ -80,6 +80,7 @@ $('#countries').change(function(){
         success: function(result){
             console.log(result);
             if(result.status.code == 200){
+              setFlag($('#selectCountry').val());
                setCountryInfo(result);
             }
         },
@@ -95,4 +96,8 @@ function showInfoBtn() {
 
 function setCountry(countryName) {
     $('#countryName').html(countryName);
+}
+
+function setFlag(iso2code) {
+    $('#country-flag').html(`<img src="https://www.countryflags.io/${iso2code}/shiny/64.png"></img>`);
 }

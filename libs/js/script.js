@@ -1,3 +1,5 @@
+var locationMarker;
+
 navigator.geolocation.getCurrentPosition((position) => {
   let lat = position.coords.latitude;
   let lon = position.coords.longitude;
@@ -69,7 +71,7 @@ function setCountryInfo(result) {
 // Changes on country selection
 $('#countries').change(function(){
     showInfoBtn();
-    $.ajax({
+      $.ajax({
         url: "libs/php/getCountryInfo.php",
         type: 'POST',
         dataType: 'json',
@@ -82,6 +84,7 @@ $('#countries').change(function(){
             if(result.status.code == 200){
               setFlag($('#selectCountry').val());
                setCountryInfo(result);
+               getWeatherData()
             }
         },
         error: function(jqXHR, textStatus, errorThrown){
@@ -89,6 +92,37 @@ $('#countries').change(function(){
         }
     });
 });
+
+function getWeatherData(){
+    $.ajax({
+        url: "libs/php/getWeather.php",
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            capital: capital
+        },
+        success: function(result){
+            if(result.status.code == 200){
+                console.log(result);
+                $('#temperature').html((`${Math.floor(parseFloat(result['data']['main']['temp']) - 273.15)} <sup>o</sup>C`));
+                $('#humidity').html(`${result['data']['main']['humidity']} %`);
+                lng = result['data']['coord']['lon'];
+                lat = result['data']['coord']['lat'];
+                updateMarker(result['data']['coord']['lat'], result['data']['coord']['lon']);
+            }
+        },
+        error: function(jqXHR, textStatus, errorThrown){
+            alert(`Error in weather: ${textStatus} : ${errorThrown} : ${jqXHR}`);
+        }
+    });
+}
+
+function updateMarker(lng, lat){
+    if(locationMarker != undefined){
+        mymap.removeLayer(locationMarker);
+    }
+    locationMarker = L.marker([lng, lat]).addTo(mymap);
+};
 
 function showInfoBtn() {
     $('#btnInfo').css("display", "block");

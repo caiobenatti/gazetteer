@@ -1,4 +1,11 @@
 var locationMarker;
+var lat = 0, long = 0, country_name = 'India', mymap, country_alpaname = 'Ind', currency_code = 'INR', capital_city = 'delhi';
+var rest_countries; // will contain "fetched" data
+var latLngBounds;
+var timeZones;
+var borderLayer;
+var layerGroup;
+
 
 navigator.geolocation.getCurrentPosition((position) => {
   let lat = position.coords.latitude;
@@ -15,6 +22,7 @@ navigator.geolocation.getCurrentPosition((position) => {
 //set the map to London
 var mymap = L.map('mapid').setView([51.505, -0.09], 13);
 
+
 //initialize map
 L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY2JlbmF0dGkiLCJhIjoiY2tnbjBtYnlzMTg4OTJ1bmFqZzBqNnRtNCJ9.UDgPFngvQmeW3XbRk16-wQ', {
 		maxZoom: 18,
@@ -26,6 +34,8 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
         zoomOffset: -1
 }).addTo(mymap);
 
+  layerGroup = new L.LayerGroup();
+  layerGroup.addTo(mymap);
 
 // pointing to html dropdown list countries
 const countriesList = document.getElementById("countries");
@@ -53,11 +63,10 @@ function initialize(countriesData) {
 }
 // Set all the country info
 function setCountryInfo(result) {
-    showInfoBtn();
     $('#continent').html(result['data'][0]['continent']);
     capital = result['data'][0]['capital'];
     currency = result['data'][0]['currencyCode'];
-    country = result['data'][0]['isoAlpha3'];
+    country_name = result['data'][0]['countryName'];
   	setCountry(result['data'][0]['countryName'])
     $('#capital').html(capital);
     $('#languages').html(result['data'][0]['languages']);
@@ -68,9 +77,8 @@ function setCountryInfo(result) {
   }
 
 
-// Changes on country selection
+// // Changes on country selection
 $('#countries').change(function(){
-    showInfoBtn();
       $.ajax({
         url: "libs/php/getCountryInfo.php",
         type: 'POST',
@@ -85,6 +93,7 @@ $('#countries').change(function(){
               setFlag($('#selectCountry').val());
                setCountryInfo(result);
                getWeatherData()
+               applyCountryBorder(mymap, country_name);
             }
         },
         error: function(jqXHR, textStatus, errorThrown){
@@ -92,6 +101,67 @@ $('#countries').change(function(){
         }
     });
 });
+
+
+function applyCountryBorder(map, countryname) {
+    $.ajax({
+      type: "GET",
+      dataType: "json",
+      url:
+        "https://nominatim.openstreetmap.org/search?country=" +
+        countryname.trim() +
+        "&polygon_geojson=1&format=json"
+    })
+    .then(function (data) {
+      latLngBounds = [data[0].boundingbox];
+      borderLayer = L.geoJSON([data[0].geojson], {
+        color: "blue",
+        weight: 2,
+        opacity: 1,
+        fillOpacity: 0.0
+      }).addTo(mymap);
+      layerGroup.addLayer(borderLayer);
+      mymap.fitBounds([
+        [parseFloat(latLngBounds[0]), parseFloat(latLngBounds[2])],
+        [parseFloat(latLngBounds[1]), parseFloat(latLngBounds[3])]]);
+    });
+      L.geoJSON(data[0].geojson, {
+        color: "green",
+        weight: 14,
+        opacity: 1,
+        fillOpacity: 0.0 
+      }).addTo(map);
+};
+    
+function applyCountryBorder(map, countryname) {
+    $.ajax({
+      type: "GET",
+      dataType: "json",
+      url:
+        "https://nominatim.openstreetmap.org/search?country=" +
+        countryname.trim() +
+        "&polygon_geojson=1&format=json"
+    })
+    .then(function (data) {
+      latLngBounds = data[0].boundingbox;
+      borderLayer = L.geoJSON(data[0].geojson, {
+        color: "blue",
+        weight: 2,
+        opacity: 1,
+        fillOpacity: 0.0
+      }).addTo(mymap);
+      layerGroup.addLayer(borderLayer);
+      mymap.fitBounds([
+        [parseFloat(latLngBounds[0]), parseFloat(latLngBounds[2])],
+        [parseFloat(latLngBounds[1]), parseFloat(latLngBounds[3])]]);
+    });
+
+
+}
+
+
+
+
 
 function getWeatherData(){
     $.ajax({
@@ -123,10 +193,6 @@ function updateMarker(lng, lat){
     }
     locationMarker = L.marker([lng, lat]).addTo(mymap);
 };
-
-function showInfoBtn() {
-    $('#btnInfo').css("display", "block");
-}
 
 function setCountry(countryName) {
     $('#countryName').html(countryName);

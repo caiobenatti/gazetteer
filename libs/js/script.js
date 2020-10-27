@@ -50,9 +50,9 @@ layerGroup.addTo(mymap);
 L.easyButton('fas fa-info-circle', function () {
 $("#infoModal").modal("show");}, 'Country Introduction').addTo(mymap);
 
+
 L.easyButton( 'fa-search', function(){
-  alert('you just clicked a font awesome icon');
-}).addTo(mymap);
+ $("#Weather").modal("show");}, 'Country Introduction').addTo(mymap).addTo(mymap);
 
 // pointing to html dropdown list countries
 const countriesList = document.getElementById("countries");
@@ -184,6 +184,9 @@ function getWeatherData(){
                 $('#humidity').html(`${result['data']['main']['humidity']} %`);
                 lng = result['data']['coord']['lon'];
                 lat = result['data']['coord']['lat'];
+                $('#iconWeather').html("http://openweathermap.org/img/wn/${result['data']['weather'][0]['icon']@2x.png>");
+                $('#descriptionWeather').html(`${result['data']['weather'][0]['description']}`);
+
                 updateMarker(result['data']['coord']['lat'], result['data']['coord']['lon']);
             }
         },

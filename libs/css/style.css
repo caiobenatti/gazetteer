@@ -28,16 +28,8 @@
   animation: animate-preloader 1s linear infinite;
 }
 
-/* html,
-body,
-#mapid {
-  height: 100%;
-  width: 100%;
-  overflow: hidden;
-  z-index: 0;
-} */
 body {
-  height: calc(100% - 51px);
+  height: calc(100% - 70px);
 }
 
 html,
@@ -63,6 +55,7 @@ html,
 }
 
 nav {
+  margin-bottom: 0px;
   display: block;
   margin-top: auto;
   position: block;

@@ -1,7 +1,7 @@
 //starting variables for fetching data;
 let locationMarker;
 let lat;
-let long;
+let lng;
 let country_name;
 let rest_countries; 
 let latLngBounds;
@@ -12,18 +12,18 @@ let currency;
 
 navigator.geolocation.getCurrentPosition((position) => {
   let lat = position.coords.latitude;
-  let lon = position.coords.longitude;
-  let currentLocation = mymap.setView([lat, lon], 7);
+  let lng = position.coords.longitude;
+  let currentLocation = mymap.setView([lat, lng], 7);
   
-  let marker = L.marker([lat,lon]).addTo(mymap)
-  let popup = L.popup().setLatLng([lat,lon]).setContent("You are here").openOn(mymap)
+  let marker = L.marker([lat,lng]).addTo(mymap)
+  let popup = L.popup().setLatLng([lat,lng]).setContent("You are here").openOn(mymap)
 
   console.log(position)
 
 });
 
-//set the map to London
-var mymap = L.map('mapid').setView([51.505, -0.09], 13);
+
+var mymap = L.map('mapid', {zoomControl:false}).fitWorld();
 
 
 //initialize map
@@ -79,7 +79,7 @@ function setCountryInfo(result) {
     lng = (result['data'][0]['north'] + result['data'][0]['south']) / 2;
     lat = (result['data'][0]['east'] + result['data'][0]['west']) / 2;
     $('#area').html(`${result['data'][0]['areaInSqKm']} km<sup>2</sup>`);
-    $('#wikipedia').html(`https://en.wikipedia.org/wiki/${country_name}`)
+ 
   }
 
 
@@ -98,9 +98,11 @@ $('#countries').change(function(){
             if(result.status.code == 200){
               setFlag($('#countries').val());
               setCountryInfo(result);
-              getWeatherData()
+              getWeatherData();
               applyCountryBorder(mymap, country_name);
-              getExchangeRateData()
+              getExchangeRateData();
+              getWikipedia();
+              updateMarker(lng, lat)
             }
            
         },
@@ -109,6 +111,9 @@ $('#countries').change(function(){
         }
     });
 });
+
+
+//Function for APIS
 
 function applyCountryBorder(map, countryname) {
     $.ajax({
@@ -128,9 +133,9 @@ function applyCountryBorder(map, countryname) {
         fillOpacity: 0.0
       }).addTo(mymap);
       layerGroup.addLayer(borderLayer);
-        mymap.fitBounds([
+      mymap.flyToBounds([
         [parseFloat(latLngBounds[0]), parseFloat(latLngBounds[2])],
-        [parseFloat(latLngBounds[1]), parseFloat(latLngBounds[3])]]);
+        [parseFloat(latLngBounds[1]), parseFloat(latLngBounds[3])]], {animate: true, duration: 1.5});
     });
 
 
@@ -156,7 +161,6 @@ function getExchangeRateData() {
     });
 }
 
-
 function getWeatherData(){
     $.ajax({
         url: "libs/php/getWeather.php",
@@ -181,15 +185,39 @@ function getWeatherData(){
     });
 }
 
+function getWikipedia(){
+  $.ajax({
+    url: "libs/php/getWikipedia.php",
+    type: 'POST',
+    dataType: 'json',
+    data: {
+      q: country_name
+    },
+    success: function(result) {
+    $('#wikipedia').html(`${result['data'][0]['summary']}`);
+    //$('#wikiurl').html(`<a href='${result['data'][0]['wikipediaUrl']}'>${result['data'][0]['wikipediaUrl']} </a>`);
+      },
+    error: function(jqXHR, textStatus, errorThrown) {
+      console.log(textStatus);
+      console.log(errorThrown);
+      console.log(jqXHR);
+    }
+  }); 
+}
+
+
 function updateMarker(lng, lat){
      if(borderLayer){
         layerGroup.removeLayer(borderLayer);
+      }
+      if(locationMarker != undefined){
         mymap.removeLayer(locationMarker);
       }
-    borderLayer = L.marker([lng, lat]).addTo(mymap).bindPopup(`Capital City: ${capital}`).openPopup();
+    locationMarker = L.marker([lng, lat]).addTo(mymap).bindPopup(`Capital City: ${capital}`).openPopup();
 
 };
 
+//Sets the flag for the Country
 function setFlag(iso2code) {
     $('#country-flag').html(`<img src="https://www.countryflags.io/${iso2code}/flat/64.png">`);
 }

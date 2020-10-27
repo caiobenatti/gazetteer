@@ -97,11 +97,12 @@ $('#countries').change(function(){
             console.log(result);
             if(result.status.code == 200){
               setFlag($('#countries').val());
-               setCountryInfo(result);
-               getWeatherData()
-               applyCountryBorder(mymap, country_name);
-               getExchangeRateData()
+              setCountryInfo(result);
+              getWeatherData()
+              applyCountryBorder(mymap, country_name);
+              getExchangeRateData()
             }
+           
         },
         error: function(jqXHR, textStatus, errorThrown){
             alert(`${textStatus} ${errorThrown}`);
@@ -127,7 +128,7 @@ function applyCountryBorder(map, countryname) {
         fillOpacity: 0.0
       }).addTo(mymap);
       layerGroup.addLayer(borderLayer);
-      mymap.fitBounds([
+        mymap.fitBounds([
         [parseFloat(latLngBounds[0]), parseFloat(latLngBounds[2])],
         [parseFloat(latLngBounds[1]), parseFloat(latLngBounds[3])]]);
     });
@@ -143,8 +144,9 @@ function getExchangeRateData() {
           success: function(result){
             if(result){
                 console.log(result);
+                $('#currency').html(`${currency}`);
                 $('#exchangeTitle').html(`USD/${currency}`);
-                $('#exchangeRate').html(`${result['data']['rates']['currency']}`);
+                $('#exchangeRate').html(`${result['data']['rates'][currency]}`);
                  
             }
         },
@@ -181,8 +183,10 @@ function getWeatherData(){
 
 function updateMarker(lng, lat){
      if(borderLayer){
-        layerGroup.removeLayer(borderLayer);}
-    borderLayer = L.marker([lng, lat]).addTo(mymap);
+        layerGroup.removeLayer(borderLayer);
+        mymap.removeLayer(locationMarker);
+      }
+    borderLayer = L.marker([lng, lat]).addTo(mymap).bindPopup(`Capital City: ${capital}`).openPopup();
 
 };
 

@@ -23,7 +23,7 @@ navigator.geolocation.getCurrentPosition((position) => {
 });
 
 
-var mymap = L.map('mapid', {zoomControl:false}).fitWorld();
+var mymap = L.map('mapid').setView([51.505, -0.09], 5)
 
 
 //initialize map

@@ -31,18 +31,18 @@
 html,
 body,
 #mapid {
-  z-index: 0;
   height: 100%;
   width: 100%;
+  overflow: hidden;
+  z-index: 0;
 }
 
 #countries {
-  height: 3rem;
+  height: 1rem;
   position: relative;
   float: left;
   min-width: 300px;
   min-height: 60px;
-
   color: #777;
   font-weight: 300;
   background-color: #fff;

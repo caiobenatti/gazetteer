@@ -10,6 +10,7 @@ let layerGroup;
 let currency;
 
 
+
 navigator.geolocation.getCurrentPosition((position) => {
   let lat = position.coords.latitude;
   let lng = position.coords.longitude;
@@ -27,6 +28,7 @@ var mymap = L.map('mapid').setView([51.505, -0.09], 5)
 
 
 //initialize map
+function mapStart(){
 L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY2JlbmF0dGkiLCJhIjoiY2tnbjBtYnlzMTg4OTJ1bmFqZzBqNnRtNCJ9.UDgPFngvQmeW3XbRk16-wQ', {
     maxZoom: 18,
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
@@ -39,9 +41,18 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     zoomOffset: -1
 }).addTo(mymap);
 
+}
 
-  layerGroup = new L.LayerGroup();
-  layerGroup.addTo(mymap);
+layerGroup = new L.LayerGroup();
+layerGroup.addTo(mymap);
+
+
+L.easyButton('fas fa-info-circle', function () {
+$("#infoModal").modal("show");}, 'Country Introduction').addTo(mymap);
+
+L.easyButton( 'fa-search', function(){
+  alert('you just clicked a font awesome icon');
+}).addTo(mymap);
 
 // pointing to html dropdown list countries
 const countriesList = document.getElementById("countries");
@@ -69,17 +80,16 @@ function initialize(countriesData) {
 }
 // Set all the country info
 function setCountryInfo(result) {
-    $('#continent').html(result['data'][0]['continent']);
     capital = result['data'][0]['capital'];
     currency = result['data'][0]['currencyCode'];
     country_name = result['data'][0]['countryName'];
+    lng = (result['data'][0]['north'] + result['data'][0]['south']) / 2;
+    lat = (result['data'][0]['east'] + result['data'][0]['west']) / 2;
     $('#capital').html(capital);
     $('#languages').html(result['data'][0]['languages']);
     $('#population').html(result['data'][0]['population']);
-    lng = (result['data'][0]['north'] + result['data'][0]['south']) / 2;
-    lat = (result['data'][0]['east'] + result['data'][0]['west']) / 2;
     $('#area').html(`${result['data'][0]['areaInSqKm']} km<sup>2</sup>`);
- 
+    $('#continent').html(result['data'][0]['continent']);
   }
 
 
@@ -133,9 +143,7 @@ function applyCountryBorder(map, countryname) {
         fillOpacity: 0.0
       }).addTo(mymap);
       layerGroup.addLayer(borderLayer);
-      mymap.flyToBounds([
-        [parseFloat(latLngBounds[0]), parseFloat(latLngBounds[2])],
-        [parseFloat(latLngBounds[1]), parseFloat(latLngBounds[3])]], {animate: true, duration: 1.5});
+      mymap.flyToBounds(borderLayer);
     });
 
 
@@ -221,3 +229,5 @@ function updateMarker(lng, lat){
 function setFlag(iso2code) {
     $('#country-flag').html(`<img src="https://www.countryflags.io/${iso2code}/flat/64.png">`);
 }
+
+mapStart();

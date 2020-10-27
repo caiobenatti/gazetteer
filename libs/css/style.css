@@ -28,13 +28,24 @@
   animation: animate-preloader 1s linear infinite;
 }
 
-html,
+/* html,
 body,
 #mapid {
   height: 100%;
   width: 100%;
   overflow: hidden;
   z-index: 0;
+} */
+body {
+  height: calc(100% - 51px);
+}
+
+html,
+#mapid {
+  height: 100%;
+  overflow: hidden;
+  z-index: 0;
+  width: 100%;
 }
 
 #countries {
@@ -52,8 +63,9 @@ body,
 }
 
 nav {
+  display: block;
   margin-top: auto;
-  position: absolute;
+  position: block;
   z-index: 1;
   float: right;
   cursor: pointer;

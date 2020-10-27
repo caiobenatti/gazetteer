@@ -15,7 +15,7 @@ navigator.geolocation.getCurrentPosition((position) => {
   let lng = position.coords.longitude;
   let currentLocation = mymap.setView([lat, lng], 7);
   
-  let marker = L.marker([lat,lng]).addTo(mymap)
+  updateMarker([lat,lng])
   let popup = L.popup().setLatLng([lat,lng]).setContent("You are here").openOn(mymap)
 
   console.log(position)
@@ -195,7 +195,7 @@ function getWikipedia(){
     },
     success: function(result) {
     $('#wikipedia').html(`${result['data'][0]['summary']}`);
-    //$('#wikiurl').html(`<a href='${result['data'][0]['wikipediaUrl']}'>${result['data'][0]['wikipediaUrl']} </a>`);
+    $('#wikiurl').html(`<a href='${result['data'][0]['wikipediaUrl']}'>${result['data'][0]['wikipediaUrl']} </a>`);
       },
     error: function(jqXHR, textStatus, errorThrown) {
       console.log(textStatus);

@@ -53,13 +53,18 @@
                         <div class="modal-dialog modal-dialog-scrollable">
                             <div class="modal-content">
                                 <div class="modal-body">
-                                <p>Temperature: <span id="iconWeather"></span> </p>
-                                <p>Temperature: <span class="bold" id="descriptionWeather"></span></p>
-                                <p>Temperature: <span class="bold" id="temperature"></span></p>
-                                <p>Humidity: <span class="bold" id="humidity"></span></p>
-                                <p><small class="text-muted"></small></p>
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                                </div>
+                                <section class="ajax-section">
+                                 <div class="container">
+                                    <ul class="cities"></ul>
+                                    <li class="city">
+                                    <h2 class="city-name"><span id="nameWeather"></span><sup id="sysCountry"></sup></h2>
+                                    <span class="city-temp" id="temperature"><sup>°C</sup></span>
+                                    <p class="city-icon"><span id="iconWeather"></span> </p>
+                                    <p id="descriptionWeather">/p>
+                                </li>
+                                 </div>
+                                </section>
+                                 </div>
                             </div>
                         </div>
                     </div>

@@ -48,7 +48,7 @@ getCountryList()
 function findNumber (iso2code) {
   for (i = 0 ; i < countryDump.length; i++){
     if (countryDump[i].properties.iso_a2 == iso2code){
-      datatest = countryDump[i]
+      dataset = countryDump[i]
     }
   }
 }
@@ -140,7 +140,7 @@ $('#countries').change(function(){
 
 
 function applyCountryBorder() {
-         borderLayer = L.geoJSON(datatest.geometry, {
+         borderLayer = L.geoJSON(dataset.geometry, {
         color: "blue",
         weight: 2,
         opacity: 1,
@@ -184,11 +184,13 @@ function getWeatherData(){
         success: function(result){
             if(result.status.code == 200){
                 console.log(result);
-                $('#temperature').html((`${Math.floor(parseFloat(result['data']['main']['temp']) - 273.15)} <sup>o</sup>C`));
-                $('#humidity').html(`${result['data']['main']['humidity']} %`);
                 lng = result['data']['coord']['lon'];
                 lat = result['data']['coord']['lat'];
-                $("#iconWeather").html("<img src='http://openweathermap.org/img/w/" + result['data']['weather'][0]['icon'] + ".png' alt='Icon depicting current weather.'>");
+                $('#temperature').html((`${Math.floor(parseFloat(result['data']['main']['temp']) - 273.15)} <sup>o</sup>C`));
+                $('#humidity').html(`${result['data']['main']['humidity']} %`);
+                $('#sysCountry').html(`${result['data']['sys']['country']}`);
+                $('#nameWeather').html(`${result['data']['name']}`);
+                $("#iconWeather").html("<img src='http://openweathermap.org/img/w/" + result['data']['weather'][0]['icon'] + ".png'>");
                 $('#descriptionWeather').html(`${result['data']['weather'][0]['description']}`);
                 updateMarker(result['data']['coord']['lat'], result['data']['coord']['lon']);
                 applyCountryBorder();
@@ -237,9 +239,9 @@ function setFlag(iso2code) {
 function formatPopulation(num){
     let pop = parseInt(num);
     if(pop/1000000 > 1){
-        return `${(pop/1000000).toFixed(2)} mln`;
+        return `${(pop/1000000).toFixed(2)} millon`;
     }else if(pop/1000 > 1){
-        return `${(pop/1000).toFixed(2)} k`;
+        return `${(pop/1000).toFixed(2)} thousand`;
     }else {
         return `${pop.toFixed()}`;
 }
@@ -248,9 +250,9 @@ function formatPopulation(num){
 function formatArea(num){
     let area = Number(num).toPrecision();
     if(area/1000000 > 1){
-        return `${(area/1000000).toFixed(2)} mln`;
+        return `${(area/1000000).toFixed(2)} millon`;
     }else if(area/1000 > 1) {
-        return `${(area/1000).toFixed(2)} k`
+        return `${(area/1000).toFixed(2)} thousand`
     }else {
         return `${area}`;
     }

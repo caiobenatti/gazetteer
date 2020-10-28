@@ -89,7 +89,7 @@ L.easyButton('fas fa-info-circle', function () {
 $("#infoModal").modal("show");}, 'Country Introduction').addTo(mymap);
 
 L.easyButton( 'fa-cloud-sun', function(){
- $("#Weather").modal("show");}, 'Country Introduction').addTo(mymap).addTo(mymap);
+ $("#Weather").modal("show");}, 'Country Introduction').addTo(mymap);
 
 // Set all the country info
 function setCountryInfo(result) {
@@ -125,7 +125,9 @@ $('#countries').change(function(){
               getWeatherData();
               getExchangeRateData();
               getWikipedia();
-              applyCountryBorder();
+              if (borderLayer){
+                  mymap.removeLayer(borderLayer);
+              }
              }
            
         },
@@ -140,13 +142,13 @@ $('#countries').change(function(){
 
 
 function applyCountryBorder() {
-         borderLayer = L.geoJSON(dataset.geometry, {
+    borderLayer = L.geoJSON(dataset.geometry, {
         color: "blue",
         weight: 2,
         opacity: 1,
         fillOpacity: 0.0
       }).addTo(mymap);
-      layerGroup.addLayer(borderLayer);
+      mymap.addLayer(borderLayer);
       mymap.flyToBounds(borderLayer);
       
 };
@@ -184,13 +186,10 @@ function getWeatherData(){
         success: function(result){
             if(result.status.code == 200){
                 console.log(result);
-                lng = result['data']['coord']['lon'];
-                lat = result['data']['coord']['lat'];
                 $('#temperature').html((`${Math.floor(parseFloat(result['data']['main']['temp']) - 273.15)} <sup>o</sup>C`));
                 $('#humidity').html(`${result['data']['main']['humidity']} %`);
                 $('#sysCountry').html(`${result['data']['sys']['country']}`);
                 $('#nameWeather').html(`${result['data']['name']}`);
-                console.log(result['data']['weather'][0]['icon'])
                 $("#iconWeather").html("<img src='http://openweathermap.org/img/wn/" + result['data']['weather'][0]['icon'] + "@4x.png'>");
                 $('#descriptionWeather').html(`${result['data']['weather'][0]['description']}`);
                 updateMarker(result['data']['coord']['lat'], result['data']['coord']['lon']);
@@ -222,9 +221,9 @@ function getWikipedia(){
 }
 
 function updateMarker(lng, lat){
-     if(borderLayer != undefined){
-        layerGroup.remove(borderLayer);
-      }
+    //  if(borderLayer != undefined){
+    //     mymap.removeLayer(borderLayer);
+    //   }
       if(locationMarker != undefined){
         mymap.removeLayer(locationMarker);
       }

@@ -71,7 +71,6 @@ for (i = 0; i < countryDump.length; i++) {
 }
 
 
-
 //initialize map
 function mapStart(){
 L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY2JlbmF0dGkiLCJhIjoiY2tnbjBtYnlzMTg4OTJ1bmFqZzBqNnRtNCJ9.UDgPFngvQmeW3XbRk16-wQ', {
@@ -133,11 +132,11 @@ $('#countries').change(function(){
               findNumber($('#countries').val());
               setCountryInfo(result);
               getWeatherData();
-              applyCountryBorder(mymap, country_name);
               getExchangeRateData();
               getWikipedia();
               updateMarker(lng, lat)
-            }
+              applyCountryBorder();
+             }
            
         },
         error: function(jqXHR, textStatus, errorThrown){
@@ -149,28 +148,6 @@ $('#countries').change(function(){
 
 //Function for APIS
 
-// function applyCountryBorder(map, countryname) {
-//     $.ajax({
-//       type: "GET",
-//       dataType: "json",
-//       url:
-//         "https://nominatim.openstreetmap.org/search?country=" +
-//         countryname.trim() +
-//         "&polygon_geojson=1&format=json"
-//     })
-//     .then(function (data) {
-//       latLngBounds = data[0].boundingbox;
-//       borderLayer = L.geoJSON(datatest.geometry, {
-//         color: "blue",
-//         weight: 2,
-//         opacity: 1,
-//         fillOpacity: 0.0
-//       }).addTo(mymap);
-//       layerGroup.addLayer(borderLayer);
-//       mymap.flyToBounds(borderLayer);
-//     });
-
-// }
 
 function applyCountryBorder() {
       borderLayer = L.geoJSON(datatest.geometry, {
@@ -181,7 +158,9 @@ function applyCountryBorder() {
       }).addTo(mymap);
       layerGroup.addLayer(borderLayer);
       mymap.flyToBounds(borderLayer);
-      };
+};
+
+
 
 function getExchangeRateData() {
     $.ajax({
@@ -220,7 +199,7 @@ function getWeatherData(){
                 lat = result['data']['coord']['lat'];
                 $('#iconWeather').html("http://openweathermap.org/img/wn/${result['data']['weather'][0]['icon']@2x.png>");
                 $('#descriptionWeather').html(`${result['data']['weather'][0]['description']}`);
-
+                applyCountryBorder();
                 updateMarker(result['data']['coord']['lat'], result['data']['coord']['lon']);
             }
         },

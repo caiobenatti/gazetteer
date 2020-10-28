@@ -113,15 +113,9 @@ nav {
   padding: 0.2em 0.6em;
   border-radius: 30px;
   color: var(--text_light);
-  background: var(--orange);
+  background: var(--orange);W
 }
  
-.ajax-section .city-icon {
-  margin-top: 10px;
-  width: 100px;
-  height: 100px;
-}
-
 
 @-webkit-keyframes animate-preloader {
   0% {

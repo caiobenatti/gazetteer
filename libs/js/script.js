@@ -14,7 +14,7 @@ var mymap = L.map('mapid').setView([51.505, -0.09], 5)
 navigator.geolocation.getCurrentPosition((position) => {
   let lat = position.coords.latitude;
   let lng = position.coords.longitude;
-  let currentLocation = mymap.setView([lat, lng], 7);
+  let currentLocation = mymap.setView([lat, lng], 13);
   
   updateMarker([lat,lng])
   let popup = L.popup().setLatLng([lat,lng]).setContent("You are here").openOn(mymap)
@@ -190,7 +190,8 @@ function getWeatherData(){
                 $('#humidity').html(`${result['data']['main']['humidity']} %`);
                 $('#sysCountry').html(`${result['data']['sys']['country']}`);
                 $('#nameWeather').html(`${result['data']['name']}`);
-                $("#iconWeather").html("<img src='http://openweathermap.org/img/w/" + result['data']['weather'][0]['icon'] + ".png'>");
+                console.log(result['data']['weather'][0]['icon'])
+                $("#iconWeather").html("<img src='http://openweathermap.org/img/wn/" + result['data']['weather'][0]['icon'] + "@4x.png'>");
                 $('#descriptionWeather').html(`${result['data']['weather'][0]['description']}`);
                 updateMarker(result['data']['coord']['lat'], result['data']['coord']['lon']);
                 applyCountryBorder();

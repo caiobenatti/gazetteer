@@ -144,7 +144,7 @@ $('#countries').change(function(){
 function applyCountryBorder() {
     borderLayer = L.geoJSON(dataset.geometry, {
         color: "blue",
-        weight: 2,
+        weight: 8,
         opacity: 1,
         fillOpacity: 0.0
       }).addTo(mymap);

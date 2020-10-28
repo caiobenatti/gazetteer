@@ -28,15 +28,17 @@
   animation: animate-preloader 1s linear infinite;
 }
 
-body {
-  height: calc(100% - 70px);
-}
 
-html,
-#mapid {
+
+html, body {
   height: 100%;
   overflow: hidden;
   z-index: 0;
+  width: 100%;
+}
+
+#mapid {
+  height: calc(100vh - 54px);
   width: 100%;
 }
 
@@ -63,6 +65,11 @@ nav {
   float: right;
   cursor: pointer;
   width: 100%;
+  box-shadow: 0px 2px 5px #aaaaaa;
+}
+
+.navbar {
+box-shadow: 0px 2px 5px #aaaaaa;
 }
 
 .bold {
@@ -92,11 +99,6 @@ nav {
   background: var(--text_light);
 }
  
-.ajax-section figcaption {
-  margin-top: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
  
 .ajax-section .city-temp {
   font-size: 5rem;

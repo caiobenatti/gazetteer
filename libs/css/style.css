@@ -29,7 +29,6 @@
 }
 
 
-
 html, body {
   height: 100%;
   overflow: hidden;
@@ -38,16 +37,13 @@ html, body {
 }
 
 #mapid {
-  height: calc(100vh - 54px);
+  height: calc(100vh - 56px);
   width: 100%;
 }
 
 #countries {
-  height: 1rem;
   position: relative;
   float: left;
-  min-width: 300px;
-  min-height: 60px;
   color: #777;
   font-weight: 300;
   background-color: #fff;
@@ -70,6 +66,7 @@ nav {
 
 .navbar {
 box-shadow: 0px 2px 5px #aaaaaa;
+background-image: linear-gradient(to right, white , lightblue);
 }
 
 .bold {
@@ -123,6 +120,8 @@ box-shadow: 0px 2px 5px #aaaaaa;
   font-weight: 300;
   font-size: 2em;
 }
+
+
 
 @-webkit-keyframes animate-preloader {
   0% {

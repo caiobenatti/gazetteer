@@ -4,16 +4,12 @@ let lat;
 let lng;
 let country_name;
 let borderLayer;
-let layerGroup;
 let currency;
 let countryDump;
+let layerGroup;
 const countriesList = document.getElementById("countries");
 var mymap = L.map('mapid').setView([51.505, -0.09], 5)
 
-//test
-let borderLayer1;
-let layerGroup1;
-let datatest;
 
 navigator.geolocation.getCurrentPosition((position) => {
   let lat = position.coords.latitude;
@@ -67,7 +63,6 @@ for (i = 0; i < countryDump.length; i++) {
   }
 
   countriesList.innerHTML = options;
-
 }
 
 
@@ -84,21 +79,17 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     noWrap: true,
     zoomOffset: -1
 }).addTo(mymap);
-
 }
 
-layerGroup = new L.LayerGroup();
-layerGroup.addTo(mymap);
+  layerGroup = new L.LayerGroup();
+  layerGroup.addTo(mymap);
 
 // Easy Buttons
 L.easyButton('fas fa-info-circle', function () {
 $("#infoModal").modal("show");}, 'Country Introduction').addTo(mymap);
 
-
-L.easyButton( 'fa-search', function(){
+L.easyButton( 'fa-cloud-sun', function(){
  $("#Weather").modal("show");}, 'Country Introduction').addTo(mymap).addTo(mymap);
-
-
 
 // Set all the country info
 function setCountryInfo(result) {
@@ -109,8 +100,8 @@ function setCountryInfo(result) {
     lat = (result['data'][0]['east'] + result['data'][0]['west']) / 2;
     $('#capital').html(capital);
     $('#languages').html(result['data'][0]['languages']);
-    $('#population').html(result['data'][0]['population']);
-    $('#area').html(`${result['data'][0]['areaInSqKm']} km<sup>2</sup>`);
+    $('#population').html(formatPopulation(result['data'][0]['population']));
+    $('#area').html(`${formatArea(result['data'][0]['areaInSqKm'])} km<sup>2</sup>`);
     $('#continent').html(result['data'][0]['continent']);
   }
 
@@ -134,7 +125,6 @@ $('#countries').change(function(){
               getWeatherData();
               getExchangeRateData();
               getWikipedia();
-              updateMarker(lng, lat)
               applyCountryBorder();
              }
            
@@ -150,7 +140,7 @@ $('#countries').change(function(){
 
 
 function applyCountryBorder() {
-      borderLayer = L.geoJSON(datatest.geometry, {
+         borderLayer = L.geoJSON(datatest.geometry, {
         color: "blue",
         weight: 2,
         opacity: 1,
@@ -158,6 +148,7 @@ function applyCountryBorder() {
       }).addTo(mymap);
       layerGroup.addLayer(borderLayer);
       mymap.flyToBounds(borderLayer);
+      
 };
 
 
@@ -197,10 +188,10 @@ function getWeatherData(){
                 $('#humidity').html(`${result['data']['main']['humidity']} %`);
                 lng = result['data']['coord']['lon'];
                 lat = result['data']['coord']['lat'];
-                $('#iconWeather').html("http://openweathermap.org/img/wn/${result['data']['weather'][0]['icon']@2x.png>");
+                $("#iconWeather").html("<img src='http://openweathermap.org/img/w/" + result['data']['weather'][0]['icon'] + ".png' alt='Icon depicting current weather.'>");
                 $('#descriptionWeather').html(`${result['data']['weather'][0]['description']}`);
-                applyCountryBorder();
                 updateMarker(result['data']['coord']['lat'], result['data']['coord']['lon']);
+                applyCountryBorder();
             }
         },
         error: function(jqXHR, textStatus, errorThrown){
@@ -228,8 +219,8 @@ function getWikipedia(){
 }
 
 function updateMarker(lng, lat){
-     if(borderLayer){
-        layerGroup.removeLayer(borderLayer);
+     if(borderLayer != undefined){
+        layerGroup.remove(borderLayer);
       }
       if(locationMarker != undefined){
         mymap.removeLayer(locationMarker);
@@ -242,5 +233,29 @@ function updateMarker(lng, lat){
 function setFlag(iso2code) {
     $('#country-flag').html(`<img src="https://www.countryflags.io/${iso2code}/flat/64.png">`);
 }
+//functions for formatting numbers
+function formatPopulation(num){
+    let pop = parseInt(num);
+    if(pop/1000000 > 1){
+        return `${(pop/1000000).toFixed(2)} mln`;
+    }else if(pop/1000 > 1){
+        return `${(pop/1000).toFixed(2)} k`;
+    }else {
+        return `${pop.toFixed()}`;
+}
+}
 
+function formatArea(num){
+    let area = Number(num).toPrecision();
+    if(area/1000000 > 1){
+        return `${(area/1000000).toFixed(2)} mln`;
+    }else if(area/1000 > 1) {
+        return `${(area/1000).toFixed(2)} k`
+    }else {
+        return `${area}`;
+    }
+}
+
+
+//start the map
 mapStart();

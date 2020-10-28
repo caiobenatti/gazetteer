@@ -69,6 +69,8 @@ nav {
   font-weight: 200;
 }
 
+/* weather card */
+
 @-webkit-keyframes animate-preloader {
   0% {
     -webkit-transform: rotate(0deg);

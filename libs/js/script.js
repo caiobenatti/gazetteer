@@ -3,13 +3,17 @@ let locationMarker;
 let lat;
 let lng;
 let country_name;
-let rest_countries; 
-let latLngBounds;
 let borderLayer;
 let layerGroup;
 let currency;
+let countryDump;
+const countriesList = document.getElementById("countries");
+var mymap = L.map('mapid').setView([51.505, -0.09], 5)
 
-
+//test
+let borderLayer1;
+let layerGroup1;
+let datatest;
 
 navigator.geolocation.getCurrentPosition((position) => {
   let lat = position.coords.latitude;
@@ -24,7 +28,48 @@ navigator.geolocation.getCurrentPosition((position) => {
 });
 
 
-var mymap = L.map('mapid').setView([51.505, -0.09], 5)
+
+
+//create a list of all countries
+function getCountryList(){
+  $.ajax({
+    url: "libs/php/getCountry.php",
+    type: 'GET',
+    dataType: 'json',
+      success: function(result) {
+        countryDump = result;
+        countryDump.sort((a, b) => a.properties.name < b.properties.name ? -1 : 1)
+        cList();
+      },
+    error: function(jqXHR, textStatus, errorThrown) {
+      console.log(textStatus, errorThrown, jqXHR);
+    }
+  }); 
+}
+
+getCountryList()
+
+function findNumber (iso2code) {
+  for (i = 0 ; i < countryDump.length; i++){
+    if (countryDump[i].properties.iso_a2 == iso2code){
+      datatest = countryDump[i]
+    }
+  }
+}
+
+function cList() {
+let options = "";
+for (i = 0; i < countryDump.length; i++) {
+    if (i == 0) {
+      options += '<option value="" disabled selected>Select a country</option>';
+    }
+    options += `<option value="${countryDump[i].properties.iso_a2}">${countryDump[i].properties.name}</option>`;
+  }
+
+  countriesList.innerHTML = options;
+
+}
+
 
 
 //initialize map
@@ -46,7 +91,7 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
 layerGroup = new L.LayerGroup();
 layerGroup.addTo(mymap);
 
-
+// Easy Buttons
 L.easyButton('fas fa-info-circle', function () {
 $("#infoModal").modal("show");}, 'Country Introduction').addTo(mymap);
 
@@ -54,30 +99,8 @@ $("#infoModal").modal("show");}, 'Country Introduction').addTo(mymap);
 L.easyButton( 'fa-search', function(){
  $("#Weather").modal("show");}, 'Country Introduction').addTo(mymap).addTo(mymap);
 
-// pointing to html dropdown list countries
-const countriesList = document.getElementById("countries");
 
-//get countries info from Restcountries
-fetch("https://restcountries.eu/rest/v2/all")
-  .then(res => res.json())
-  .then(data => initialize(data))
-  .catch(err => console.log("Rest Countries fetch Error:", err));
 
-//create a list of all countries
-function initialize(countriesData) {
-  rest_countries = countriesData;
-  let options = "";
-
-  for (i = 0; i < rest_countries.length; i++) {
-    if (i == 0) {
-      options += '<option value="" disabled selected>Select a country</option>';
-    }
-    options += `<option value="${rest_countries[i].alpha2Code}">${rest_countries[i].name}</option>`;
-  }
-
-  countriesList.innerHTML = options;
-
-}
 // Set all the country info
 function setCountryInfo(result) {
     capital = result['data'][0]['capital'];
@@ -107,6 +130,7 @@ $('#countries').change(function(){
             console.log(result);
             if(result.status.code == 200){
               setFlag($('#countries').val());
+              findNumber($('#countries').val());
               setCountryInfo(result);
               getWeatherData();
               applyCountryBorder(mymap, country_name);
@@ -125,18 +149,31 @@ $('#countries').change(function(){
 
 //Function for APIS
 
-function applyCountryBorder(map, countryname) {
-    $.ajax({
-      type: "GET",
-      dataType: "json",
-      url:
-        "https://nominatim.openstreetmap.org/search?country=" +
-        countryname.trim() +
-        "&polygon_geojson=1&format=json"
-    })
-    .then(function (data) {
-      latLngBounds = data[0].boundingbox;
-      borderLayer = L.geoJSON(data[0].geojson, {
+// function applyCountryBorder(map, countryname) {
+//     $.ajax({
+//       type: "GET",
+//       dataType: "json",
+//       url:
+//         "https://nominatim.openstreetmap.org/search?country=" +
+//         countryname.trim() +
+//         "&polygon_geojson=1&format=json"
+//     })
+//     .then(function (data) {
+//       latLngBounds = data[0].boundingbox;
+//       borderLayer = L.geoJSON(datatest.geometry, {
+//         color: "blue",
+//         weight: 2,
+//         opacity: 1,
+//         fillOpacity: 0.0
+//       }).addTo(mymap);
+//       layerGroup.addLayer(borderLayer);
+//       mymap.flyToBounds(borderLayer);
+//     });
+
+// }
+
+function applyCountryBorder() {
+      borderLayer = L.geoJSON(datatest.geometry, {
         color: "blue",
         weight: 2,
         opacity: 1,
@@ -144,10 +181,7 @@ function applyCountryBorder(map, countryname) {
       }).addTo(mymap);
       layerGroup.addLayer(borderLayer);
       mymap.flyToBounds(borderLayer);
-    });
-
-
-}
+      };
 
 function getExchangeRateData() {
     $.ajax({
@@ -209,13 +243,10 @@ function getWikipedia(){
     $('#wikiurl').html(`<a href='${result['data'][0]['wikipediaUrl']}'>${result['data'][0]['wikipediaUrl']} </a>`);
       },
     error: function(jqXHR, textStatus, errorThrown) {
-      console.log(textStatus);
-      console.log(errorThrown);
-      console.log(jqXHR);
+      console.log(textStatus, errorThrown, jqXHR);
     }
   }); 
 }
-
 
 function updateMarker(lng, lat){
      if(borderLayer){

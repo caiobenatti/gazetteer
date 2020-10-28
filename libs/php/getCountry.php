@@ -1,34 +1,36 @@
 <?php
 
-// $executionStartTime = microtime(true) / 1000;
+$json = file_get_contents("./countryBorders.json");
 
-// $ch = curl_init();
 
-// $url = 'http://api.geonames.org/countryCodeJSON?lat=' . $_REQUEST['lat'] . '&lng=' . $_REQUEST['long'] . '&username=cbenatti';
 
-// curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);
-// curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-// curl_setopt($ch, CURLOPT_URL, $url);
+$output = json_decode($json, true);
 
-// $result = curl_exec($ch);
+// echo $output;
+// echo "<br>";
+// echo $output['features'][0]['properties']['iso_a3'];
 
-// if ($e = curl_error($ch)) {
-//     echo $e;
-// } else {
-//     $decode = json_decode($result, true);
+// echo "<br>";
+// echo count($output['features']);
+
+$output = $output['features'];
+
+// echo "<br>";
+echo json_encode($output);
+
+
+// $feature;
+// foreach ($output as $key => $value) {
+// 	if ( 'AFG' == $value['properties']['iso_a3']) {
+// 		$feature = $value;
+// 	}
 // }
 
-// curl_close($ch);
+// header('Content-Type: application/json; charset=UTF-8');
 
-$string = file_get_contents("../libs/util/countryBorders.json");
-$decode=json_decode($string,true);
+// echo "test";
+// echo json_encode($feature);
 
-$output['status']['code'] = "200";
-$output['status']['name'] = "ok";
-$output['status']['description'] = "mission saved";
-$output['status']['returnedIn'] = (microtime(true) - $executionStartTime) / 1000 . " ms";
-$output['data'] = $decode;
+// $_REQUEST['code']
+?>
 
-header('Content-Type: application/json; charset=UTF-8');
-
-echo json_encode($output);

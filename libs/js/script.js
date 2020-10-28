@@ -85,11 +85,15 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
   layerGroup.addTo(mymap);
 
 // Easy Buttons
-L.easyButton('fas fa-info-circle', function () {
+L.easyButton('fa-info-circle', function () {
 $("#infoModal").modal("show");}, 'Country Introduction').addTo(mymap);
 
-L.easyButton( 'fa-cloud-sun', function(){
+ L.easyButton('fa-money-bill-wave', function(){
+ $("#Money").modal("show");}, 'Country Introduction').addTo(mymap);
+
+L.easyButton('fa-cloud-sun', function(){
  $("#Weather").modal("show");}, 'Country Introduction').addTo(mymap);
+
 
 // Set all the country info
 function setCountryInfo(result) {

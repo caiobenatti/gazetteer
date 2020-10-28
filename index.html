@@ -37,8 +37,6 @@
                 <p id="country-flag"></p>
                 <p>Continent: <span class="bold" id="continent"></span></p>
                 <p>Capital: <span class="bold" id="capital"></span></p>
-                <p>Currency: <span class="bold" id="currency"></span></p>
-                <p><span id='exchangeTitle'></span> <span class="bold" id="exchangeRate"></span></p>
                 <p>Population: <span class="bold" id="population"></span></p>
                 <p>Area (km<sup>2</sup>): <span class="bold" id="area"></span></p>
                 <p>Wikipedia: <span id="wikipedia"></span> </p>
@@ -50,23 +48,40 @@
                 </div>
              </div>
    
-                    <div class="modal fade" id="Weather" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-scrollable">
-                            <div class="modal-content">
-                                <div class="modal-body">
-                                <section class="ajax-section">
-                                 <div class="container">
-                                    <p id="iconWeather"></p>
-                                    <p id="descriptionWeather">/p>
-                                    <p class="city"></p>
-                                    <h2 class="city-name"><span id="nameWeather"></span>  <sup id="sysCountry"></sup></h2>
-                                    <span class="city-temp" id="temperature"><sup>°C</sup></span>
-                                 </div>
-                                </section>
-                                 </div>
-                            </div>
+            <div class="modal fade" id="Weather" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                        <section class="ajax-section">
+                         <div class="container">
+                            <p id="iconWeather"></p>
+                            <p id="descriptionWeather"></p>
+                            <p class="city"></p>
+                            <h2 class="city-name"><span id="nameWeather"></span>  <sup id="sysCountry"></sup></h2>
+                            <span class="city-temp" id="temperature"><sup>°C</sup></span>
+                         </div>
+                       </section>
+                         </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal fade" id="Money" tabindex="-1" aria-labelledby="infoModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <div class="modal-body">
+                            <section class="ajax-section">
+                                <div class="container">
+                                    <h2 class="city">Currency: <span class="bold" id="currency"></span></h2>
+                                    <h2><span id='exchangeTitle'></span> <span class="bold" id="exchangeRate"></span></h2>
+                                    <br>
+                                    <br>
+                                </div>
+                            </section>
                         </div>
                     </div>
+                </div>
+            </div>
 
 
     <div id="mapid"></div>

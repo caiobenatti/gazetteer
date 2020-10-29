@@ -70,7 +70,12 @@ background-image: linear-gradient(to right, white , lightblue);
 }
 
 .bold {
-  font-weight: 200;
+  font-weight: 500;
+}
+
+.modal-body {
+  box-shadow: 0px 2px 5px #aaaaaa;
+  background-image: linear-gradient(to right, white , lightblue);
 }
 
 /* weather card */

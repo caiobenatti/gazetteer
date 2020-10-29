@@ -11,17 +11,29 @@ const countriesList = document.getElementById("countries");
 var mymap = L.map('mapid').setView([51.505, -0.09], 5)
 
 
-navigator.geolocation.getCurrentPosition((position) => {
-  let lat = position.coords.latitude;
-  let lng = position.coords.longitude;
-  let currentLocation = mymap.setView([lat, lng], 13);
+// navigator.geolocation.getCurrentPosition((position) => {
+//   let lat = position.coords.latitude;
+//   let lng = position.coords.longitude;
+//   let currentLocation = mymap.setView([lat, lng], 13);
   
-  updateMarker([lat,lng])
-  let popup = L.popup().setLatLng([lat,lng]).setContent("You are here").openOn(mymap)
+//   updateMarker([lat,lng])
+//   let popup = L.popup().setLatLng([lat,lng]).setContent("You are here").openOn(mymap)
 
-  console.log(position)
+//   console.log(position)
+  
+// });
 
-});
+if (navigator.geolocation) {
+  navigator.geolocation.getCurrentPosition(function(position) {
+    console.log('--- Your Position: ---');
+    console.log('Lat: ' + position.coords.latitude);
+    lat = position.coords.latitude;
+    console.log('Long: ' + position.coords.longitude);
+    lng = position.coords.longitude;
+    console.log('---------------------');
+    let popup = L.popup().setLatLng([lat,lng]).setContent("You are here").openOn(mymap)
+} 
+)}
 
 
 
@@ -168,7 +180,7 @@ function getExchangeRateData() {
             if(result){
                 console.log(result);
                 $('#currency').html(`${currency}`);
-                $('#exchangeTitle').html(`USD/${currency}`);
+                $('#exchangeTitle').html(`${currency}`);
                 $('#exchangeRate').html(`${result['data']['rates'][currency]}`);
                  
             }

@@ -1,31 +1,21 @@
 <?php
 
-$json = file_get_contents("./countryBorders.json");
+$string = file_get_contents('util/countryBorders.json');
 
-$output = json_decode($json, true);
+$array = json_decode($string, true);
 
-$output = $output['features'];
+$output = $array['features'];
+$feature;
 
-echo json_encode($output);
-
-	// $string = file_get_contents('util/countryBorders.json');
-
-	// $array = json_decode($string, true);
-
-	// $output = $array['features'];
-	// $feature;
-
-	// foreach ($output as $key => $value) {
-    //     if ($_REQUEST['code']  //SE COLOCAR BAHAMAR POR EXEMPLO ELE RETORNA O JSON DO OBJETO BAHAMAS
-    //      == $value['properties']['name']) {
-	// 		$feature = $value;
-	// 	}
-	// }
+	foreach ($output as $key => $value) {
+        if ($_REQUEST['code'] == $value['properties']['iso_a2']) {
+			$feature = $value;
+		}
+	}
 	
-	// header('Content-Type: application/json; charset=UTF-8');
+	header('Content-Type: application/json; charset=UTF-8');
 
-    // echo json_encode($feature);
+    echo json_encode($feature);
 
 
 ?>
-

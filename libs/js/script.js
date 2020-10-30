@@ -5,7 +5,6 @@ let lng;
 let country_name;
 let borderLayer;
 let currency;
-let countryDump;
 var mymap = L.map('mapid').setView([51.505, -0.09], 5)
 
 //navigator getting the geolocation from browser
@@ -21,41 +20,25 @@ if (navigator.geolocation) {
 } 
 )}
 
-//create a list of all countries
+
 function getCountryList(){
   $.ajax({
-    url: "libs/php/getCountry.php",
+    url: "libs/php/getCountryList.php",
     type: 'GET',
     dataType: 'json',
       success: function(result) {
-        countryDump = result;
-        countryDump.sort((a, b) => a.properties.name < b.properties.name ? -1 : 1)
-        countryList();
+        $("#countries").append(`<option value="" disabled selected>Select a country</option>`);
+    for (i = 0; i < result.length; i++) {
+    $("#countries").append(`<option value="${result[i].iso_a2}">${result[i].name}</option>`);
+  }
       },
     error: function(jqXHR, textStatus, errorThrown) {
       console.log(textStatus, errorThrown, jqXHR);
     }
   }); 
 }
-//initialize the country selection bar
-getCountryList()
 
-//find the iso2 code for the country selected
-function findNumber (iso2code) {
-  for (i = 0 ; i < countryDump.length; i++){
-    if (countryDump[i].properties.iso_a2 == iso2code){
-      dataset = countryDump[i]
-    }
-  }
-}
-// create the country list and append to the id
-function countryList() {
-let options = "";
-  $("#countries").append(`<option value="" disabled selected>Select a country</option>`);
-  for (i = 0; i < countryDump.length; i++) {
-    $("#countries").append(`<option value="${countryDump[i].properties.iso_a2}">${countryDump[i].properties.name}</option>`);
-  }
-}
+getCountryList()
 
 //initialize map
 function mapStart(){
@@ -110,7 +93,6 @@ $('#countries').change(function(){
             console.log(result);
             if(result.status.code == 200){
               setFlag($('#countries').val());
-              findNumber($('#countries').val());
               setCountryInfo(result);
               getWeatherData();
               getExchangeRateData();
@@ -118,6 +100,7 @@ $('#countries').change(function(){
               if (borderLayer){
                   mymap.removeLayer(borderLayer);
               }
+              applyCountryBorder($('#countries').val())
              }
            
         },
@@ -131,8 +114,17 @@ $('#countries').change(function(){
 //Function for APIS
 
 //apply the borders on the map and move the map to new location
-function applyCountryBorder() {
-    borderLayer = L.geoJSON(dataset.geometry, {
+function applyCountryBorder(iso2) {
+   $.ajax({
+        url: "libs/php/getCountry.php",
+        type: 'POST',
+        dataType: 'json',
+        data: {
+            code: iso2,
+              },
+        success: function(result){
+
+      borderLayer = L.geoJSON(result.geometry, {
         color: "blue",
         weight: 8,
         opacity: 1,
@@ -140,8 +132,8 @@ function applyCountryBorder() {
       }).addTo(mymap);
       mymap.addLayer(borderLayer);
       mymap.flyToBounds(borderLayer);
-      
-};
+        }  
+})};
 
 
 

@@ -51,11 +51,9 @@ function findNumber (iso2code) {
 // create the country list and append to the id
 function countryList() {
 let options = "";
-for (i = 0; i < countryDump.length; i++) {
-    if (i == 0) {
-      options += '<option value="" disabled selected>Select a country</option>';
-    }
-     $("#countries").append(`<option value="${countryDump[i].properties.iso_a2}">${countryDump[i].properties.name}</option>`);
+  $("#countries").append(`<option value="" disabled selected>Select a country</option>`);
+  for (i = 0; i < countryDump.length; i++) {
+    $("#countries").append(`<option value="${countryDump[i].properties.iso_a2}">${countryDump[i].properties.name}</option>`);
   }
 }
 

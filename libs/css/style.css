@@ -84,7 +84,6 @@ background-image: linear-gradient(to right, white , lightblue);
   position: relative;
   padding: 40px 10%;
   border-radius: 20px;
-  background: var(--text_light);
   color: var(--text_med);
 }
  
@@ -98,7 +97,6 @@ background-image: linear-gradient(to right, white , lightblue);
   z-index: -1;
   opacity: 0.3;
   border-radius: 20px;
-  background: var(--text_light);
 }
  
  
@@ -106,7 +104,7 @@ background-image: linear-gradient(to right, white , lightblue);
   font-size: 5rem;
   font-weight: bold;
   margin-top: 10px;
-  color: var(--text_dark);
+
 }
  
 .ajax-section .city sup {
@@ -121,7 +119,7 @@ background-image: linear-gradient(to right, white , lightblue);
 }
  
 #descriptionWeather{
-  text-transform: capitalize;
+  text-transform: capitalize ;
   font-weight: 300;
   font-size: 2em;
 }

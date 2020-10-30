@@ -49,21 +49,20 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
       'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
     id: 'mapbox/streets-v11',
     tileSize: 512,
-    continuousWorld: false,
-    noWrap: true,
     zoomOffset: -1
+
 }).addTo(mymap);
 }
 
 // Easy Buttons
 L.easyButton('fa-info-circle', function () {
-$("#infoModal").modal("show");}, 'Country Introduction').addTo(mymap);
+$("#infoModal").modal("show");}, 'Country Information').addTo(mymap);
 
  L.easyButton('fa-money-bill-wave', function(){
- $("#Money").modal("show");}, 'Country Introduction').addTo(mymap);
+ $("#Money").modal("show");}, 'Country Currency').addTo(mymap);
 
 L.easyButton('fa-cloud-sun', function(){
- $("#Weather").modal("show");}, 'Country Introduction').addTo(mymap);
+ $("#Weather").modal("show");}, 'Country Weather').addTo(mymap);
 
 
 // Set all the country info

@@ -6,6 +6,7 @@ let country_name;
 let borderLayer;
 let currency;
 var mymap = L.map('mapid').setView([51.505, -0.09], 5)
+let countryDump;
 
 //navigator getting the geolocation from browser
 if (navigator.geolocation) {
@@ -20,23 +21,25 @@ if (navigator.geolocation) {
 } 
 )}
 
-
 function getCountryList(){
   $.ajax({
     url: "libs/php/getCountryList.php",
     type: 'GET',
     dataType: 'json',
       success: function(result) {
+        console.log(result)
+        if(result[0].code == 200){
         $("#countries").append(`<option value="" disabled selected>Select a country</option>`);
-    for (i = 0; i < result.length; i++) {
+    for (i = 1; i < result.length; i++) {
     $("#countries").append(`<option value="${result[i].iso_a2}">${result[i].name}</option>`);
   }
-      },
+  }
+    },
     error: function(jqXHR, textStatus, errorThrown) {
       console.log(textStatus, errorThrown, jqXHR);
     }
   }); 
-}
+  }
 
 getCountryList()
 
@@ -89,7 +92,6 @@ $('#countries').change(function(){
             lang: 'en'
         },
         success: function(result){
-            console.log(result);
             if(result.status.code == 200){
               setFlag($('#countries').val());
               setCountryInfo(result);
@@ -122,17 +124,17 @@ function applyCountryBorder(iso2) {
             code: iso2,
               },
         success: function(result){
-          console.log('Result from country border')
-          console.log(result)
-      borderLayer = L.geoJSON(result, {
+         if(result.status.code == 200){
+        borderLayer = L.geoJSON(result, {
         color: "blue",
-        weight: 8,
+        weight: 3,
         opacity: 1,
-        fillOpacity: 0.0
+        fillOpacity: 0.0,
+        dashArray: 20,
       }).addTo(mymap);
       mymap.addLayer(borderLayer);
       mymap.flyToBounds(borderLayer);
-        } 
+        } }
 })};
 
 
@@ -144,7 +146,6 @@ function getExchangeRateData() {
         dataType: 'json',
           success: function(result){
             if(result){
-                console.log(result);
                 $('#currency').html(`${currency}`);
                 $('#exchangeTitle').html(`${currency}`);
                 $('#exchangeRate').html(`${result['data']['rates'][currency]}`);
@@ -167,7 +168,6 @@ function getWeatherData(){
         },
         success: function(result){
             if(result.status.code == 200){
-                console.log(result);
                 $('#temperature').html((`${Math.floor(parseFloat(result['data']['main']['temp']) - 273.15)} <sup>o</sup>C`));
                 $('#humidity').html(`${result['data']['main']['humidity']} %`);
                 $('#sysCountry').html(`${result['data']['sys']['country']}`);
@@ -219,7 +219,7 @@ function setFlag(iso2) {
 function formatPopulation(num){
     let pop = parseInt(num);
     if(pop/1000000 > 1){
-        return `${(pop/1000000).toFixed(2)} millon`;
+        return `${(pop/1000000).toFixed(2)} m`;
     }else if(pop/1000 > 1){
         return `${(pop/1000).toFixed(2)} thousand`;
     }else {
@@ -230,7 +230,7 @@ function formatPopulation(num){
 function formatArea(num){
     let area = Number(num).toPrecision();
     if(area/1000000 > 1){
-        return `${(area/1000000).toFixed(2)} millon`;
+        return `${(area/1000000).toFixed(2)} m`;
     }else if(area/1000 > 1) {
         return `${(area/1000).toFixed(2)} thousand`
     }else {

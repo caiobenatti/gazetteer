@@ -37,13 +37,13 @@ body {
 }
 
 #mapid {
-  height: calc(100vh - 96px);
+  height: calc(100vh - 56px);
   width: 100%;
 }
 
 #countries {
   position: relative;
-  float: left;
+  /* float: left; */
   color: #777;
   font-weight: 300;
   background-color: #fff;
@@ -62,6 +62,10 @@ nav {
   cursor: pointer;
   width: 100%;
   box-shadow: 0px 2px 5px #aaaaaa;
+}
+
+select {
+  max-width: 200px;
 }
 
 .navbar {

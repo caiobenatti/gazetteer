@@ -4,18 +4,21 @@ $string = file_get_contents('countryBorders.json');
 
 $array = json_decode($string, true);
 
-$output = $array['features'];
-$feature;
+$feature = $array['features'];
+$output;
 
-	foreach ($output as $key => $value) {
+	foreach ($feature as $key => $value) {
         if ($_REQUEST['code'] == $value['properties']['iso_a2']) {
-			$feature = $value;
+			$output = $value;
 		}
 	}
 	
 	header('Content-Type: application/json; charset=UTF-8');
 
-    echo json_encode($feature);
+$output['status']['code'] = "200";
+$output['status']['name'] = "ok";
+
+echo json_encode($output);
 
 
 ?>

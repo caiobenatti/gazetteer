@@ -7,22 +7,9 @@ let borderLayer;
 let currency;
 let countryDump;
 let layerGroup;
-const countriesList = document.getElementById("countries");
 var mymap = L.map('mapid').setView([51.505, -0.09], 5)
 
-
-// navigator.geolocation.getCurrentPosition((position) => {
-//   let lat = position.coords.latitude;
-//   let lng = position.coords.longitude;
-//   let currentLocation = mymap.setView([lat, lng], 13);
-  
-//   updateMarker([lat,lng])
-//   let popup = L.popup().setLatLng([lat,lng]).setContent("You are here").openOn(mymap)
-
-//   console.log(position)
-  
-// });
-
+//navigator getting the geolocation from browser
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(function(position) {
     console.log('--- Your Position: ---');
@@ -34,9 +21,6 @@ if (navigator.geolocation) {
     let popup = L.popup().setLatLng([lat,lng]).setContent("You are here").openOn(mymap)
 } 
 )}
-
-
-
 
 //create a list of all countries
 function getCountryList(){
@@ -57,6 +41,7 @@ function getCountryList(){
 
 getCountryList()
 
+//find the iso2 code for the country selected
 function findNumber (iso2code) {
   for (i = 0 ; i < countryDump.length; i++){
     if (countryDump[i].properties.iso_a2 == iso2code){
@@ -64,17 +49,15 @@ function findNumber (iso2code) {
     }
   }
 }
-
+// create the country list and append to the id
 function cList() {
 let options = "";
 for (i = 0; i < countryDump.length; i++) {
     if (i == 0) {
       options += '<option value="" disabled selected>Select a country</option>';
     }
-    options += `<option value="${countryDump[i].properties.iso_a2}">${countryDump[i].properties.name}</option>`;
+     $("#countries").append(`<option value="${countryDump[i].properties.iso_a2}">${countryDump[i].properties.name}</option>`);
   }
-
-  countriesList.innerHTML = options;
 }
 
 
@@ -156,7 +139,7 @@ $('#countries').change(function(){
 
 //Function for APIS
 
-
+//apply the borders on the map and move the map to new location
 function applyCountryBorder() {
     borderLayer = L.geoJSON(dataset.geometry, {
         color: "blue",
@@ -236,10 +219,8 @@ function getWikipedia(){
   }); 
 }
 
+//update the marker for the country capital
 function updateMarker(lng, lat){
-    //  if(borderLayer != undefined){
-    //     mymap.removeLayer(borderLayer);
-    //   }
       if(locationMarker != undefined){
         mymap.removeLayer(locationMarker);
       }
@@ -251,6 +232,7 @@ function updateMarker(lng, lat){
 function setFlag(iso2code) {
     $('#country-flag').html(`<img src="https://www.countryflags.io/${iso2code}/flat/64.png">`);
 }
+
 //functions for formatting numbers
 function formatPopulation(num){
     let pop = parseInt(num);

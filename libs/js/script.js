@@ -6,7 +6,6 @@ let country_name;
 let borderLayer;
 let currency;
 let countryDump;
-let layerGroup;
 var mymap = L.map('mapid').setView([51.505, -0.09], 5)
 
 //navigator getting the geolocation from browser
@@ -31,14 +30,14 @@ function getCountryList(){
       success: function(result) {
         countryDump = result;
         countryDump.sort((a, b) => a.properties.name < b.properties.name ? -1 : 1)
-        cList();
+        countryList();
       },
     error: function(jqXHR, textStatus, errorThrown) {
       console.log(textStatus, errorThrown, jqXHR);
     }
   }); 
 }
-
+//initialize the country selection bar
 getCountryList()
 
 //find the iso2 code for the country selected
@@ -50,7 +49,7 @@ function findNumber (iso2code) {
   }
 }
 // create the country list and append to the id
-function cList() {
+function countryList() {
 let options = "";
 for (i = 0; i < countryDump.length; i++) {
     if (i == 0) {
@@ -59,7 +58,6 @@ for (i = 0; i < countryDump.length; i++) {
      $("#countries").append(`<option value="${countryDump[i].properties.iso_a2}">${countryDump[i].properties.name}</option>`);
   }
 }
-
 
 //initialize map
 function mapStart(){
@@ -75,9 +73,6 @@ L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_toke
     zoomOffset: -1
 }).addTo(mymap);
 }
-
-  layerGroup = new L.LayerGroup();
-  layerGroup.addTo(mymap);
 
 // Easy Buttons
 L.easyButton('fa-info-circle', function () {
@@ -98,14 +93,12 @@ function setCountryInfo(result) {
     lng = (result['data'][0]['north'] + result['data'][0]['south']) / 2;
     lat = (result['data'][0]['east'] + result['data'][0]['west']) / 2;
     $('#capital').html(capital);
-    $('#languages').html(result['data'][0]['languages']);
     $('#population').html(formatPopulation(result['data'][0]['population']));
     $('#area').html(`${formatArea(result['data'][0]['areaInSqKm'])} km<sup>2</sup>`);
     $('#continent').html(result['data'][0]['continent']);
   }
 
-
-// // Changes on country selection
+// Changes on country selection
 $('#countries').change(function(){
       $.ajax({
         url: "libs/php/getCountryInfo.php",

@@ -27,7 +27,6 @@ function getCountryList(){
     type: 'GET',
     dataType: 'json',
       success: function(result) {
-        console.log(result)
         if(result[0].code == 200){
         $("#countries").append(`<option value="" disabled selected>Select a country</option>`);
     for (i = 1; i < result.length; i++) {

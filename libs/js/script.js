@@ -122,8 +122,9 @@ function applyCountryBorder(iso2) {
             code: iso2,
               },
         success: function(result){
-
-      borderLayer = L.geoJSON(result.geometry, {
+          console.log('Result from country border')
+          console.log(result)
+      borderLayer = L.geoJSON(result, {
         color: "blue",
         weight: 8,
         opacity: 1,
@@ -131,7 +132,7 @@ function applyCountryBorder(iso2) {
       }).addTo(mymap);
       mymap.addLayer(borderLayer);
       mymap.flyToBounds(borderLayer);
-        }  
+        } 
 })};
 
 
@@ -174,7 +175,6 @@ function getWeatherData(){
                 $("#iconWeather").html("<img src='http://openweathermap.org/img/wn/" + result['data']['weather'][0]['icon'] + "@4x.png'>");
                 $('#descriptionWeather').html(`${result['data']['weather'][0]['description']}`);
                 updateMarker(result['data']['coord']['lat'], result['data']['coord']['lon']);
-                applyCountryBorder();
             }
         },
         error: function(jqXHR, textStatus, errorThrown){
@@ -211,8 +211,8 @@ function updateMarker(lng, lat){
 };
 
 //Sets the flag for the Country
-function setFlag(iso2code) {
-    $('#country-flag').html(`<img src="https://www.countryflags.io/${iso2code}/flat/64.png">`);
+function setFlag(iso2) {
+    $('#country-flag').html(`<img src="https://www.countryflags.io/${iso2}/flat/64.png">`);
 }
 
 //functions for formatting numbers

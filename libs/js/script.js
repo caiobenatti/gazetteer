@@ -200,7 +200,7 @@ function getWeatherData(){
                 $("#iconWeather").html("<img src='http://openweathermap.org/img/wn/" + result[0]['weather'][0]['icon'] + "@4x.png'>");
                 $('#descriptionWeather').html(`${result[0]['weather'][0]['description']}`);
                 updateMarker(result['city']['coord']['lat'], result['city']['coord']['lon']);
-                // fiveDayForecast();
+                fiveDayForecast();
             }
         },
         error: function(jqXHR, textStatus, errorThrown){
@@ -243,13 +243,18 @@ function setFlag(iso2) {
 
 //function for formatting five days forecast
 function fiveDayForecast(){
-  for(let i = 0 ; i < dataDump.data.list.length ; i += 8) {
-    let temp = new Forecast (datdataDump.data.list[i].dt_txt,
-                            datdataDump.data.list[i].main.temp_max,
-                            datdataDump.data.list[i].main_temp_min)
-      this.cityForecast.push(temp);
+  // for(let i = 0 ; i < dataDump.data.list.length ; i += 8) {
+  //   let temp = new Forecast (datdataDump.data.list[i].dt_txt,
+  //                           datdataDump.data.list[i].main.temp_max,
+  //                           datdataDump.data.list[i].main_temp_min)
+  //     this.cityForecast.push(temp);
+  // }
+      for (i = 1; i < 5; i++) {
+    $("#dateWeather").append(`<td>${dataDump[i].dt_txt}</td>`);
+    $("#tempMaxWeather").append(`<td>${Math.floor(parseFloat(dataDump[i].main.temp_max) - 273.15)} °C</td>`);
+    $("#tempMinWeather").append(`<td>${Math.floor(parseFloat(dataDump[i].main.temp_min) - 273.15)} °C</td>`);
   }
-  console.log(this.cityForecast);
+  // console.log(this.cityForecast);
 }
 
 //functions for formatting numbers

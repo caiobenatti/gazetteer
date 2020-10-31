@@ -6,7 +6,8 @@ let country_name;
 let borderLayer;
 let currency;
 var mymap = L.map('mapid').setView([51.505, -0.09], 5)
-let countryDump;
+let dataDump;
+let country_code;
 
 //navigator getting the geolocation from browser
 if (navigator.geolocation) {
@@ -119,6 +120,7 @@ $('#countries').change(function(){
               getWeatherData();
               getExchangeRateData();
               getWikipedia();
+              country_code = $('#countries').val();
               if (borderLayer){
                   mymap.removeLayer(borderLayer);
               }
@@ -147,7 +149,7 @@ function applyCountryBorder(iso2) {
         success: function(result){
          if(result.status.code == 200){
         borderLayer = L.geoJSON(result, {
-        color: "blue",
+        color: "orange",
         weight: 3,
         opacity: 1,
         fillOpacity: 0.0,
@@ -188,20 +190,21 @@ function getWeatherData(){
             capital: capital
         },
         success: function(result){
-            if(result.status.code == 200){
-              console.log('test')
+          dataDump = result
+             if(result.status.code == 200){
               console.log(result)
-                $('#temperature').html((`${Math.floor(parseFloat(result['data']['list'][0]['main']['temp']) - 273.15)} <sup>o</sup>C`));
-                $('#humidity').html(`${result['data']['list'][0]['main']['humidity']} %`);
-                $('#sysCountry').html(`${result['data']['city']['country']}`);
-                $('#nameWeather').html(`${result['data']['city']['name']}`);
-                $("#iconWeather").html("<img src='http://openweathermap.org/img/wn/" + result['data']['list'][0]['weather'][0]['icon'] + "@4x.png'>");
-                $('#descriptionWeather').html(`${result['data']['list'][0]['weather'][0]['description']}`);
-                updateMarker(result['data']['city']['coord']['lat'], result['data']['city']['coord']['lon']);
+                $('#temperature').html((`${Math.floor(parseFloat(result[0]['main']['temp']) - 273.15)} <sup>o</sup>C`));
+                $('#humidity').html(`${result[0]['main']['humidity']} %`);
+                $('#sysCountry').html(`${country_code}`);
+                $('#nameWeather').html(`${capital}`);
+                $("#iconWeather").html("<img src='http://openweathermap.org/img/wn/" + result[0]['weather'][0]['icon'] + "@4x.png'>");
+                $('#descriptionWeather').html(`${result[0]['weather'][0]['description']}`);
+                updateMarker(result['city']['coord']['lat'], result['city']['coord']['lon']);
+                // fiveDayForecast();
             }
         },
         error: function(jqXHR, textStatus, errorThrown){
-            alert(`Error in weather: ${textStatus} : ${errorThrown} : ${jqXHR}`);
+            console.log(`Error in weather: ${textStatus} : ${errorThrown} : ${jqXHR}`);
         }
     });
 }
@@ -236,6 +239,17 @@ function updateMarker(lng, lat){
 //Sets the flag for the Country
 function setFlag(iso2) {
     $('#country-flag').html(`<img src="https://www.countryflags.io/${iso2}/flat/64.png">`);
+}
+
+//function for formatting five days forecast
+function fiveDayForecast(){
+  for(let i = 0 ; i < dataDump.data.list.length ; i += 8) {
+    let temp = new Forecast (datdataDump.data.list[i].dt_txt,
+                            datdataDump.data.list[i].main.temp_max,
+                            datdataDump.data.list[i].main_temp_min)
+      this.cityForecast.push(temp);
+  }
+  console.log(this.cityForecast);
 }
 
 //functions for formatting numbers

@@ -44,17 +44,39 @@ getCountryList()
 
 //initialize map
 function mapStart(){
-L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY2JlbmF0dGkiLCJhIjoiY2tnbjBtYnlzMTg4OTJ1bmFqZzBqNnRtNCJ9.UDgPFngvQmeW3XbRk16-wQ', {
-    maxZoom: 18,
+// L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY2JlbmF0dGkiLCJhIjoiY2tnbjBtYnlzMTg4OTJ1bmFqZzBqNnRtNCJ9.UDgPFngvQmeW3XbRk16-wQ', {
+//     maxZoom: 18,
+//     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
+//       '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
+//       'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+//     id: 'mapbox/streets-v11',
+//     tileSize: 512,
+//     zoomOffset: -1
+L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
+    maxZoom: 20,
+    subdomains:['mt0','mt1','mt2','mt3'],
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
       '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
       'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-    id: 'mapbox/streets-v11',
-    tileSize: 512,
-    zoomOffset: -1
+//     id: 'mapbox/streets-v11',
+  }).addTo(mymap)
 
-}).addTo(mymap);
+// }).addTo(mymap);
 }
+function googleSat() { 
+L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
+    maxZoom: 20,
+    subdomains:['mt0','mt1','mt2','mt3']
+}).addTo(mymap);
+}  
+
+function googleHybrid() {
+L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',{
+    maxZoom: 20,
+    subdomains:['mt0','mt1','mt2','mt3']
+}).addTo(mymap)
+} 
+
 
 // Easy Buttons
 L.easyButton('fa-info-circle', function () {
@@ -65,6 +87,19 @@ $("#infoModal").modal("show");}, 'Country Information').addTo(mymap);
 
 L.easyButton('fa-cloud-sun', function(){
  $("#Weather").modal("show");}, 'Country Weather').addTo(mymap);
+ 
+ L.easyButton('fa-street-view', function(){L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
+    maxZoom: 20,
+    subdomains:['mt0','mt1','mt2','mt3']
+  }).addTo(mymap)
+}, 'Satellite View').addTo(mymap);
+
+L.easyButton('fa-satellite', function(){
+ L.tileLayer('http://{s}.google.com/vt/lyrs=s&x={x}&y={y}&z={z}',{
+    maxZoom: 20,
+    subdomains:['mt0','mt1','mt2','mt3']
+}).addTo(mymap);
+}, 'Satellite View').addTo(mymap);
 
 
 // Set all the country info
@@ -77,7 +112,7 @@ function setCountryInfo(result) {
     $('#capital').html(capital);
     $('#population').html(formatPopulation(result['data'][0]['population']));
     $('#area').html(`${formatArea(result['data'][0]['areaInSqKm'])} km<sup>2</sup>`);
-    $('#continent').html(result['data'][0]['continent']);
+    $('#continent').html(result['data'][0]['continentName']);
   }
 
 // Changes on country selection
@@ -192,7 +227,7 @@ function getWikipedia(){
     },
     success: function(result) {
     $('#wikipedia').html(`${result['data'][0]['summary']}`);
-    $('#wikiurl').html(`<a href='${result['data'][0]['wikipediaUrl']}'>${result['data'][0]['wikipediaUrl']} </a>`);
+    $('#wikiurl').html(`<a href='http://${result['data'][0]['wikipediaUrl']}' target="_blank">${result['data'][0]['wikipediaUrl']} </a>`);
       },
     error: function(jqXHR, textStatus, errorThrown) {
       console.log(textStatus, errorThrown, jqXHR);
@@ -231,7 +266,7 @@ function formatArea(num){
     if(area/1000000 > 1){
         return `${(area/1000000).toFixed(2)} m`;
     }else if(area/1000 > 1) {
-        return `${(area/1000).toFixed(2)} thousand`
+        return `${(area/1000).toFixed(2).toString()} thousand`
     }else {
         return `${area}`;
     }

@@ -63,19 +63,6 @@ L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
 
 // }).addTo(mymap);
 }
-function googleSat() { 
-L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
-    maxZoom: 20,
-    subdomains:['mt0','mt1','mt2','mt3']
-}).addTo(mymap);
-}  
-
-function googleHybrid() {
-L.tileLayer('http://{s}.google.com/vt/lyrs=s,h&x={x}&y={y}&z={z}',{
-    maxZoom: 20,
-    subdomains:['mt0','mt1','mt2','mt3']
-}).addTo(mymap)
-} 
 
 
 // Easy Buttons
@@ -202,13 +189,15 @@ function getWeatherData(){
         },
         success: function(result){
             if(result.status.code == 200){
-                $('#temperature').html((`${Math.floor(parseFloat(result['data']['main']['temp']) - 273.15)} <sup>o</sup>C`));
-                $('#humidity').html(`${result['data']['main']['humidity']} %`);
-                $('#sysCountry').html(`${result['data']['sys']['country']}`);
-                $('#nameWeather').html(`${result['data']['name']}`);
-                $("#iconWeather").html("<img src='http://openweathermap.org/img/wn/" + result['data']['weather'][0]['icon'] + "@4x.png'>");
-                $('#descriptionWeather').html(`${result['data']['weather'][0]['description']}`);
-                updateMarker(result['data']['coord']['lat'], result['data']['coord']['lon']);
+              console.log('test')
+              console.log(result)
+                $('#temperature').html((`${Math.floor(parseFloat(result['data']['list'][0]['main']['temp']) - 273.15)} <sup>o</sup>C`));
+                $('#humidity').html(`${result['data']['list'][0]['humidity']} %`);
+                $('#sysCountry').html(`${result['data']['city']['country']}`);
+                $('#nameWeather').html(`${result['data']['city']['name']}`);
+                $("#iconWeather").html("<img src='http://openweathermap.org/img/wn/" + result['data']['list'][0]['weather'][0]['icon'] + "@4x.png'>");
+                $('#descriptionWeather').html(`${result['data']['list'][0]['weather'][0]['description']}`);
+                updateMarker(result['data']['city']['coord']['lat'], result['data']['city']['coord']['lon']);
             }
         },
         error: function(jqXHR, textStatus, errorThrown){

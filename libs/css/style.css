@@ -109,11 +109,11 @@ select {
   margin-top: 10px;
 }
 
-.ajax-section .city sup {
+.ajax-section .city sub {
   font-size: 0.5em;
 }
 
-.ajax-section .city-name sup {
+.ajax-section .city-name sub {
   padding: 0.2em 0.6em;
   border-radius: 30px;
   color: var(--text_light);
@@ -123,7 +123,52 @@ select {
 #descriptionWeather {
   text-transform: capitalize;
   font-weight: 300;
-  font-size: 2em;
+}
+
+table {
+  display: flex;
+  position: relative;
+  top: 10px;
+  width: 100%;
+  text-align: center;
+  justify-content: space-between;
+}
+
+tr:nth-child(1) td:nth-child(1),
+tr:nth-child(1) td:nth-child(2),
+tr:nth-child(1) td:nth-child(3),
+tr:nth-child(1) td:nth-child(4),
+tr:nth-child(1) td:nth-child(5) {
+  padding-bottom: 25px;
+  padding-right: 10px;
+  -webkit-animation: up 2s cubic-bezier(0.39, 0, 0.38, 1) 0.7s;
+}
+
+tr:nth-child(2) td:nth-child(1),
+tr:nth-child(2) td:nth-child(2),
+tr:nth-child(2) td:nth-child(3),
+tr:nth-child(2) td:nth-child(4),
+tr:nth-child(2) td:nth-child(5) {
+  padding-bottom: 7px;
+  -webkit-animation: up 2s cubic-bezier(0.39, 0, 0.38, 1) 0.9s;
+}
+
+tr:nth-child(3) td:nth-child(1),
+tr:nth-child(3) td:nth-child(2),
+tr:nth-child(3) td:nth-child(3),
+tr:nth-child(3) td:nth-child(4),
+tr:nth-child(3) td:nth-child(5) {
+  padding-bottom: 7px;
+  -webkit-animation: up 2s cubic-bezier(0.39, 0, 0.38, 1) 0.9s;
+}
+
+tr:nth-child(2),
+tr:nth-child(3) {
+  font-size: 0.9em;
+}
+
+tr:nth-child(3) {
+  color: #999;
 }
 
 @-webkit-keyframes animate-preloader {

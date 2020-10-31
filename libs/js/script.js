@@ -192,7 +192,7 @@ function getWeatherData(){
               console.log('test')
               console.log(result)
                 $('#temperature').html((`${Math.floor(parseFloat(result['data']['list'][0]['main']['temp']) - 273.15)} <sup>o</sup>C`));
-                $('#humidity').html(`${result['data']['list'][0]['humidity']} %`);
+                $('#humidity').html(`${result['data']['list'][0]['main']['humidity']} %`);
                 $('#sysCountry').html(`${result['data']['city']['country']}`);
                 $('#nameWeather').html(`${result['data']['city']['name']}`);
                 $("#iconWeather").html("<img src='http://openweathermap.org/img/wn/" + result['data']['list'][0]['weather'][0]['icon'] + "@4x.png'>");

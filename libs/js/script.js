@@ -53,16 +53,16 @@ function mapStart(){
 //     id: 'mapbox/streets-v11',
 //     tileSize: 512,
 //     zoomOffset: -1
+// }).addTo(mymap);
 L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
     maxZoom: 20,
     subdomains:['mt0','mt1','mt2','mt3'],
     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
       '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
       'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-//     id: 'mapbox/streets-v11',
   }).addTo(mymap)
 
-// }).addTo(mymap);
+
 }
 
 
@@ -193,10 +193,11 @@ function getWeatherData(){
           dataDump = result
              if(result.status.code == 200){
               console.log(result)
-                $('#temperature').html((`${Math.floor(parseFloat(result[0]['main']['temp']) - 273.15)} <sup>o</sup>C`));
+                $('#temperature').html((`${Math.round(result[0]['main']['temp'])} <sup>o</sup>C`));
                 $('#humidity').html(`${result[0]['main']['humidity']} %`);
                 $('#sysCountry').html(`${country_code}`);
                 $('#nameWeather').html(`${capital}`);
+                // feels_like
                 $("#iconWeather").html("<img src='http://openweathermap.org/img/wn/" + result[0]['weather'][0]['icon'] + "@4x.png'>");
                 $('#descriptionWeather').html(`${result[0]['weather'][0]['description']}`);
                 updateMarker(result['city']['coord']['lat'], result['city']['coord']['lon']);
@@ -208,6 +209,10 @@ function getWeatherData(){
         }
     });
 }
+
+
+
+
 
 function getWikipedia(){
   $.ajax({
@@ -243,18 +248,13 @@ function setFlag(iso2) {
 
 //function for formatting five days forecast
 function fiveDayForecast(){
-  // for(let i = 0 ; i < dataDump.data.list.length ; i += 8) {
-  //   let temp = new Forecast (datdataDump.data.list[i].dt_txt,
-  //                           datdataDump.data.list[i].main.temp_max,
-  //                           datdataDump.data.list[i].main_temp_min)
-  //     this.cityForecast.push(temp);
-  // }
+  $("#days").html("")
       for (i = 1; i < 5; i++) {
-    $("#dateWeather").append(`<td>${dataDump[i].dt_txt}</td>`);
-    $("#tempMaxWeather").append(`<td>${Math.floor(parseFloat(dataDump[i].main.temp_max) - 273.15)} °C</td>`);
-    $("#tempMinWeather").append(`<td>${Math.floor(parseFloat(dataDump[i].main.temp_min) - 273.15)} °C</td>`);
+    $("#days").append(`<li><span class="day-name">${formatDate(dataDump[i].dt_txt)}</span>
+    <div class="temperature">${Math.round(dataDump[i].main.temp_max)} <span class="degree">&#8451;</span></div>
+    <div class="temperature">${Math.round(dataDump[i].main.temp_min)} <span class="degree">&#8451;</span></div><br>
+    <div><img src='http://openweathermap.org/img/wn/${dataDump[i]['weather'][0]['icon']}.png'> </div></li>`);
   }
-  // console.log(this.cityForecast);
 }
 
 //functions for formatting numbers
@@ -278,6 +278,15 @@ function formatArea(num){
     }else {
         return `${area}`;
     }
+}
+
+//format date for fiveday forecast
+function formatDate (input) {
+  var datePart = input.match(/\d+/g),
+  year = datePart[0].substring(2), // get only two digits
+  month = datePart[1], day = datePart[2];
+
+  return day+'/'+month;
 }
 
 

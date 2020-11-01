@@ -149,7 +149,7 @@ function applyCountryBorder(iso2) {
         success: function(result){
          if(result.status.code == 200){
         borderLayer = L.geoJSON(result, {
-        color: "orange",
+        color: "blue",
         weight: 3,
         opacity: 1,
         fillOpacity: 0.0,
@@ -251,9 +251,9 @@ function fiveDayForecast(){
   $("#days").html("")
       for (i = 1; i < 5; i++) {
     $("#days").append(`<li><span class="day-name">${formatDate(dataDump[i].dt_txt)}</span>
-    <div class="temperature">${Math.round(dataDump[i].main.temp_max)} <span class="degree">&#8451;</span></div>
-    <div class="temperature">${Math.round(dataDump[i].main.temp_min)} <span class="degree">&#8451;</span></div><br>
-    <div><img src='http://openweathermap.org/img/wn/${dataDump[i]['weather'][0]['icon']}.png'> </div></li>`);
+    <div><img src='http://openweathermap.org/img/wn/${dataDump[i]['weather'][0]['icon']}.png'> </div><br>
+    <div class="temperature">${Math.round(dataDump[i].main.temp_max)} <span class="degree">&#8451;</span> / ${Math.round(dataDump[i].main.temp_min)} <span class="degree">&#8451;</span></div>
+  </li>`);
   }
 }
 

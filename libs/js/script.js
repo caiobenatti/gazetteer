@@ -95,8 +95,8 @@ function setCountryInfo(result) {
     capital = result['data'][0]['capital'];
     currency = result['data'][0]['currencyCode'];
     country_name = result['data'][0]['countryName'];
-    lng = (result['data'][0]['north'] + result['data'][0]['south']) / 2;
-    lat = (result['data'][0]['east'] + result['data'][0]['west']) / 2;
+    // lng = (result['data'][0]['north'] + result['data'][0]['south']) / 2;
+    // lat = (result['data'][0]['east'] + result['data'][0]['west']) / 2;
     $('#capital').html(capital);
     $('#population').html(formatPopulation(result['data'][0]['population']));
     $('#area').html(`${formatArea(result['data'][0]['areaInSqKm'])} km<sup>2</sup>`);
@@ -192,9 +192,13 @@ function getWeatherData(capital){
         },
         success: function(result){
              if(result.status.code == 200){
+               console.log(result)
                 $('#temperature').html((`${Math.round(result['dataToday']['main']['temp'])} <sup>o</sup>C `));
-                $('#feelsLike').html((`feels like ${Math.round(result['data']['daily'][0]['feels_like']['day'])} <span class="degree">&#8451;</span> -  ${Math.round(result['data']['daily'][0]['temp'].max)} <span class="degree">&#8451;</span> / ${Math.round(result['data']['daily'][0]['temp'].min)} <span class="degree">&#8451;</span>`)) 
-                $('#humidity').html(`Humidity ${result['dataToday']['main']['humidity']} %`);
+                $('#feelsLike').html((`<span class="temperature">
+                feels like <span class="bold">${Math.round(result['data']['daily'][0]['feels_like']['day'])} </span><span class="degree">&#8451;</span>
+                 - <span class="small">max</span> <span class="bold">${Math.round(result['data']['daily'][0]['temp'].max)} </span> <span class="degree">&#8451;</span> 
+                 / <span class="small">min</span> <span class="bold">${Math.round(result['data']['daily'][0]['temp'].min)}</span> <span class="degree">&#8451;</span></span>`)) 
+                $('#humidity').html(`Humidity: <span class="bold">${result['dataToday']['main']['humidity']}</span> % - Wind speed: <span class="bold">${result['dataToday']['wind']['speed']}</span>`);
                 $('#sysCountry').html(`${country_code}`);
                 $('#nameWeather').html(`${capital}`);
                 $("#iconWeather").html("<img src='http://openweathermap.org/img/wn/" + result['dataToday']['weather'][0]['icon'] + "@4x.png'>");

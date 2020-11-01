@@ -80,6 +80,7 @@ select {
 .modal-body {
   box-shadow: 0px 2px 5px #aaaaaa;
   background-image: linear-gradient(to right, white, lightblue);
+  text-align: center;
 }
 
 /* weather card */
@@ -125,52 +126,6 @@ select {
   font-weight: 300;
 }
 
-/* table {
-  display: flex;
-  position: relative;
-  top: 10px;
-  width: 100%;
-  text-align: center;
-  justify-content: space-between;
-}
-
-tr:nth-child(1) td:nth-child(1),
-tr:nth-child(1) td:nth-child(2),
-tr:nth-child(1) td:nth-child(3),
-tr:nth-child(1) td:nth-child(4),
-tr:nth-child(1) td:nth-child(5) {
-  padding-bottom: 25px;
-  padding-right: 10px;
-  -webkit-animation: up 2s cubic-bezier(0.39, 0, 0.38, 1) 0.7s;
-}
-
-tr:nth-child(2) td:nth-child(1),
-tr:nth-child(2) td:nth-child(2),
-tr:nth-child(2) td:nth-child(3),
-tr:nth-child(2) td:nth-child(4),
-tr:nth-child(2) td:nth-child(5) {
-  padding-bottom: 7px;
-  -webkit-animation: up 2s cubic-bezier(0.39, 0, 0.38, 1) 0.9s;
-}
-
-tr:nth-child(3) td:nth-child(1),
-tr:nth-child(3) td:nth-child(2),
-tr:nth-child(3) td:nth-child(3),
-tr:nth-child(3) td:nth-child(4),
-tr:nth-child(3) td:nth-child(5) {
-  padding-bottom: 7px;
-  -webkit-animation: up 2s cubic-bezier(0.39, 0, 0.38, 1) 0.9s;
-}
-
-tr:nth-child(2),
-tr:nth-child(3) {
-  font-size: 0.9em;
-}
-
-tr:nth-child(3) {
-  color: #999;
-} */
-
 .days {
   list-style: none;
   margin: 0;
@@ -181,10 +136,6 @@ tr:nth-child(3) {
   margin-right: 30px;
   display: inline-block;
 }
-
-/* .days li:first-child {
-  margin-right: 55px;
-} */
 
 .days li:last-child {
   margin-right: 0;
@@ -206,7 +157,12 @@ tr:nth-child(3) {
 span.degree {
   font-size: 12px;
 }
-
+span.small {
+  font-size: 0.5em;
+}
+span.bold {
+  font-weight: 600;
+}
 @-webkit-keyframes animate-preloader {
   0% {
     -webkit-transform: rotate(0deg);

@@ -115,9 +115,10 @@ $('#countries').change(function(){
         },
         success: function(result){
             if(result.status.code == 200){
+              console.log(result)
               setFlag($('#countries').val());
               setCountryInfo(result);
-              getWeatherData();
+              getWeatherData(capital);
               getExchangeRateData();
               getWikipedia();
               country_code = $('#countries').val();
@@ -181,27 +182,32 @@ function getExchangeRateData() {
     });
 }
 
-function getWeatherData(){
+function getWeatherData(capital){
     $.ajax({
         url: "libs/php/getWeather.php",
         type: 'POST',
         dataType: 'json',
         data: {
-            capital: capital
+           capital: capital
         },
         success: function(result){
-          dataDump = result
              if(result.status.code == 200){
-              console.log(result)
-                $('#temperature').html((`${Math.round(result[0]['main']['temp'])} <sup>o</sup>C`));
-                $('#humidity').html(`${result[0]['main']['humidity']} %`);
+                $('#temperature').html((`${Math.round(result['dataToday']['main']['temp'])} <sup>o</sup>C `));
+                $('#feelsLike').html((`feels like ${Math.round(result['data']['daily'][0]['feels_like']['day'])} <span class="degree">&#8451;</span> -  ${Math.round(result['data']['daily'][0]['temp'].max)} <span class="degree">&#8451;</span> / ${Math.round(result['data']['daily'][0]['temp'].min)} <span class="degree">&#8451;</span>`)) 
+                $('#humidity').html(`Humidity ${result['dataToday']['main']['humidity']} %`);
                 $('#sysCountry').html(`${country_code}`);
                 $('#nameWeather').html(`${capital}`);
-                // feels_like
-                $("#iconWeather").html("<img src='http://openweathermap.org/img/wn/" + result[0]['weather'][0]['icon'] + "@4x.png'>");
-                $('#descriptionWeather').html(`${result[0]['weather'][0]['description']}`);
-                updateMarker(result['city']['coord']['lat'], result['city']['coord']['lon']);
-                fiveDayForecast();
+                $("#iconWeather").html("<img src='http://openweathermap.org/img/wn/" + result['dataToday']['weather'][0]['icon'] + "@4x.png'>");
+                $('#descriptionWeather').html(`${result['dataToday']['weather'][0]['description']}`);
+                //reseting the html to append new
+                $("#days").html("")
+                //loop through the data and append to the #days
+                  for (i = 1; i < 4; i++) {
+                  $("#days").append(`<li><span class="day-name">${timeConverter(result['data']['daily'][i].dt)}</span>
+                 <div><img src='http://openweathermap.org/img/wn/${result['data']['daily'][i]['weather'][0]['icon']}.png'> </div><br>
+                 <div class="temperature">${Math.round(result['data']['daily'][i]['temp'].max)} <span class="degree">&#8451;</span> / ${Math.round(result['data']['daily'][i]['temp'].min)} <span class="degree">&#8451;</span></div>
+                </li>`);}
+                updateMarker(result['dataToday']['coord']['lat'], result['dataToday']['coord']['lon']);
             }
         },
         error: function(jqXHR, textStatus, errorThrown){
@@ -209,9 +215,6 @@ function getWeatherData(){
         }
     });
 }
-
-
-
 
 
 function getWikipedia(){
@@ -246,16 +249,7 @@ function setFlag(iso2) {
     $('#country-flag').html(`<img src="https://www.countryflags.io/${iso2}/flat/64.png">`);
 }
 
-//function for formatting five days forecast
-function fiveDayForecast(){
-  $("#days").html("")
-      for (i = 1; i < 5; i++) {
-    $("#days").append(`<li><span class="day-name">${formatDate(dataDump[i].dt_txt)}</span>
-    <div><img src='http://openweathermap.org/img/wn/${dataDump[i]['weather'][0]['icon']}.png'> </div><br>
-    <div class="temperature">${Math.round(dataDump[i].main.temp_max)} <span class="degree">&#8451;</span> / ${Math.round(dataDump[i].main.temp_min)} <span class="degree">&#8451;</span></div>
-  </li>`);
-  }
-}
+
 
 //functions for formatting numbers
 function formatPopulation(num){
@@ -281,14 +275,23 @@ function formatArea(num){
 }
 
 //format date for fiveday forecast
-function formatDate (input) {
-  var datePart = input.match(/\d+/g),
-  year = datePart[0].substring(2), // get only two digits
-  month = datePart[1], day = datePart[2];
+// function formatDate (input) {
+//   var datePart = input.match(/\d+/g),
+//   year = datePart[0].substring(2), // get only two digits
+//   month = datePart[1], day = datePart[2];
 
-  return day+'/'+month;
+//   return day+'/'+month;
+// }
+
+//convert unix time to date/month
+function timeConverter(UNIX_timestamp){
+  var a = new Date(UNIX_timestamp * 1000);
+  var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var month = months[a.getMonth()];
+  var date = a.getDate();
+    var time = date + '/' + month;
+  return time;
 }
-
 
 //start the map
 mapStart();

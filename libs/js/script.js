@@ -201,6 +201,31 @@ function applyCountryBorder(iso2) {
   });
 }
 
+function addPOI() {
+  $.ajax({
+    url: "libs/php/getPOI.php",
+    type: "POST",
+    dataType: "json",
+    data: {
+      capital: capital,
+    },
+    success: function (result) {
+      console.log(result);
+      // if (result.status.code == 200) {
+      //   borderLayer = L.geoJSON(result, {
+      //     color: "blue",
+      //     weight: 3,
+      //     opacity: 1,
+      //     fillOpacity: 0.0,
+      //     dashArray: 20,
+      //   }).addTo(mymap);
+      //   mymap.addLayer(borderLayer);
+      //   mymap.fitBounds(borderLayer.getBounds());
+      // }
+    },
+  });
+}
+
 function getExchangeRateData() {
   $.ajax({
     url: "libs/php/getExchange.php",

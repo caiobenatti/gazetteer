@@ -8,10 +8,12 @@ let currency;
 let mymap = L.map("mapid").setView([51.505, -0.09], 5);
 let dataDump;
 let country_code;
-let today = new Date().toJSON().slice(0, 10);
-let tenDays = new Date(new Date().valueOf() - 1000 * 60 * 60 * 24 * 10)
-  .toJSON()
-  .slice(0, 10);
+// let today = new Date().toJSON().slice(0, 10);
+// let tenDays = new Date(new Date().valueOf() - 1000 * 60 * 60 * 24 * 10)
+//   .toJSON()
+//   .slice(0, 10);
+let xs = [];
+let ys = [];
 
 //navigator getting the geolocation from browser
 if (navigator.geolocation) {
@@ -210,14 +212,14 @@ function getExchangeRateData() {
             2
           )}</span><br>`
         );
-        let xs = [];
-        let ys = [];
+        xs = [];
+        ys = [];
         for (let i = 0; i < result.length; i++) {
           ys.push(result[i]["data"]["rates"][currency]);
           xs.push(timeConverter(result[i]["data"]["timestamp"]));
         }
         console.log(xs, ys);
-        updateChart(xs, ys);
+        updateChart();
       }
     },
     error: function (jqXHR, textStatus, errorThrown) {
@@ -333,16 +335,21 @@ function setFlag(iso2) {
 }
 
 //chart functions
-function updateChart(xs, ys) {
+async function updateChart() {
+  await getWeatherData();
+  let myChart = null;
+  if (myChart != null) {
+    myChart.destroy();
+  }
   const ctx = document.getElementById("myChart").getContext("2d");
-  let myChart = new Chart(ctx, {
+  myChart = new Chart(ctx, {
     type: "line",
     data: {
       labels: xs,
       datasets: [
         {
           label: `Changes on the last 5 days of ${currency}`,
-          data: [12, 19, 3, 5, 2, 3],
+          data: ys,
           fill: false,
           backgroundColor: "orange",
           borderColor: "orange",
@@ -350,17 +357,17 @@ function updateChart(xs, ys) {
         },
       ],
     },
-    options: {
-      scales: {
-        yAxes: [
-          {
-            ticks: {
-              beginAtZero: true,
-            },
-          },
-        ],
-      },
-    },
+    // options: {
+    //   scales: {
+    //     yAxes: [
+    //       {
+    //         ticks: {
+    //           beginAtZero: true,
+    //         },
+    //       },
+    //     ],
+    //   },
+    // },
   });
 }
 

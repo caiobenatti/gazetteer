@@ -36,6 +36,11 @@ body {
   width: 100%;
 }
 
+.canvas {
+  height: 400px;
+  width: 400px;
+}
+
 #mapid {
   height: calc(100vh - 56px);
   width: 100%;

@@ -14,6 +14,11 @@ let country_code;
 //   .slice(0, 10);
 let xs = [];
 let ys = [];
+let icon = L.icon({
+  iconUrl: "./libs/misc/map-pin.png",
+  iconAnchor: [24, 40],
+  popupAnchor: [0, -30],
+});
 
 //navigator getting the geolocation from browser
 if (navigator.geolocation) {
@@ -71,13 +76,6 @@ function mapStart() {
       zoomOffset: -1,
     }
   ).addTo(mymap);
-  // L.tileLayer('http://{s}.google.com/vt/lyrs=m&x={x}&y={y}&z={z}',{
-  //     maxZoom: 20,
-  //     subdomains:['mt0','mt1','mt2','mt3'],
-  //     attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, ' +
-  //       '<a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-  //       'Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-  //   }).addTo(mymap)
 }
 
 // Easy Buttons
@@ -93,7 +91,6 @@ L.easyButton(
   "fa-money-bill-wave",
   function () {
     $("#Money").modal("show");
-    updateChart();
   },
   "Country Currency"
 ).addTo(mymap);
@@ -106,12 +103,21 @@ L.easyButton(
   "Country Weather"
 ).addTo(mymap);
 
-//  L.easyButton('fa-street-view', function(){L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY2JlbmF0dGkiLCJhIjoiY2tnbjBtYnlzMTg4OTJ1bmFqZzBqNnRtNCJ9.UDgPFngvQmeW3XbRk16-wQ', {
-//     maxZoom: 18,
-//     id: 'mapbox/streets-v11',
-//     tileSize: 512,
-//     zoomOffset: -1
-// }).addTo(mymap);
+L.easyButton(
+  "fa-street-view",
+  function () {
+    L.tileLayer(
+      "https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiY2JlbmF0dGkiLCJhIjoiY2tnbjBtYnlzMTg4OTJ1bmFqZzBqNnRtNCJ9.UDgPFngvQmeW3XbRk16-wQ",
+      {
+        maxZoom: 18,
+        id: "mapbox/streets-v11",
+        tileSize: 512,
+        zoomOffset: -1,
+      }
+    ).addTo(mymap);
+  },
+  "Street View"
+).addTo(mymap);
 
 L.easyButton(
   "fa-satellite",
@@ -152,7 +158,7 @@ $("#countries").change(function () {
         console.log(result);
         setFlag($("#countries").val());
         setCountryInfo(result);
-        getWeatherData(capital);
+        getWeatherData();
         getExchangeRateData();
         getWikipedia();
         country_code = $("#countries").val();
@@ -200,10 +206,10 @@ function getExchangeRateData() {
     url: "libs/php/getExchange.php",
     type: "POST",
     dataType: "json",
+
     success: function (result) {
       if (result) {
         console.log(result);
-        dataDump = result;
         $("#currency").html(`${currency}`);
         $("#exchangeRate").html(
           `${currency}/USD <span class="bold">${result[0]["data"]["rates"][
@@ -218,7 +224,8 @@ function getExchangeRateData() {
           ys.push(result[i]["data"]["rates"][currency]);
           xs.push(timeConverter(result[i]["data"]["timestamp"]));
         }
-        console.log(xs, ys);
+        xs.reverse();
+        ys.reverse();
         updateChart();
       }
     },
@@ -228,7 +235,7 @@ function getExchangeRateData() {
   });
 }
 
-function getWeatherData(capital) {
+function getWeatherData() {
   $.ajax({
     url: "libs/php/getWeather.php",
     type: "POST",
@@ -240,7 +247,9 @@ function getWeatherData(capital) {
       if (result.status.code == 200) {
         console.log(result);
         $("#temperature").html(
-          `${Math.round(result["dataToday"]["main"]["temp"])} <sup>o</sup>C `
+          `${Math.round(
+            result["data"]["daily"][0]["temp"]["day"]
+          )} <sup>o</sup>C `
         );
         $("#feelsLike").html(`<span class="temperature">
                 feels like <span class="bold">${Math.round(
@@ -253,17 +262,17 @@ function getWeatherData(capital) {
                    result["data"]["daily"][0]["temp"].min
                  )}</span> <span class="degree">&#8451;</span></span>`);
         $("#humidity").html(
-          `Humidity: <span class="bold">${result["dataToday"]["main"]["humidity"]}</span> % - Wind speed: <span class="bold">${result["dataToday"]["wind"]["speed"]}</span>`
+          `Humidity: <span class="bold">${result["data"]["daily"][0]["humidity"]}</span> % - Wind speed: <span class="bold">${result["data"]["daily"][0]["wind_speed"]}</span>`
         );
         $("#sysCountry").html(`${country_code}`);
         $("#nameWeather").html(`${capital}`);
         $("#iconWeather").html(
           "<img src='http://openweathermap.org/img/wn/" +
-            result["dataToday"]["weather"][0]["icon"] +
+            result["data"]["daily"][0]["weather"][0]["icon"] +
             "@4x.png'>"
         );
         $("#descriptionWeather").html(
-          `${result["dataToday"]["weather"][0]["description"]}`
+          `${result["data"]["daily"][0]["weather"][0]["description"]}`
         );
         //reseting the html to append new
         $("#days").html("");
@@ -282,16 +291,11 @@ function getWeatherData(capital) {
           )} <span class="degree">&#8451;</span></div>
                 </li>`);
         }
-        updateMarker(
-          result["dataToday"]["coord"]["lat"],
-          result["dataToday"]["coord"]["lon"]
-        );
+        updateMarker(result["data"]["lat"], result["data"]["lon"]);
       }
     },
     error: function (jqXHR, textStatus, errorThrown) {
-      console.log(
-        `Error in weather: ${textStatus} : ${errorThrown} : ${jqXHR}`
-      );
+      console.log(textStatus, errorThrown, jqXHR);
     },
   });
 }
@@ -321,7 +325,7 @@ function updateMarker(lng, lat) {
   if (locationMarker != undefined) {
     mymap.removeLayer(locationMarker);
   }
-  locationMarker = L.marker([lng, lat])
+  locationMarker = L.marker([lng, lat], { icon: icon })
     .addTo(mymap)
     .bindPopup(`Capital City: ${capital}`)
     .openPopup();
@@ -357,17 +361,6 @@ async function updateChart() {
         },
       ],
     },
-    // options: {
-    //   scales: {
-    //     yAxes: [
-    //       {
-    //         ticks: {
-    //           beginAtZero: true,
-    //         },
-    //       },
-    //     ],
-    //   },
-    // },
   });
 }
 

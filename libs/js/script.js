@@ -195,7 +195,7 @@ function applyCountryBorder(iso2) {
           dashArray: 20,
         }).addTo(mymap);
         mymap.addLayer(borderLayer);
-        mymap.flyToBounds(borderLayer);
+        mymap.fitBounds(borderLayer.getBounds());
       }
     },
   });

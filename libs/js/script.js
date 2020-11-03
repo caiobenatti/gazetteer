@@ -2,7 +2,7 @@
 let locationMarker;
 let lat;
 let lng;
-let country_name;
+let countryName;
 let borderLayer;
 let currency;
 let mymap = L.map("mapid").setView([51.505, -0.09], 5);
@@ -14,6 +14,8 @@ let country_code;
 //   .slice(0, 10);
 let xs = [];
 let ys = [];
+let markers = L.markerClusterGroup();
+let markerCluster;
 let icon = L.icon({
   iconUrl: "./libs/misc/map-pin.png",
   iconAnchor: [24, 40],
@@ -134,7 +136,8 @@ L.easyButton(
 function setCountryInfo(result) {
   capital = result["data"][0]["capital"];
   currency = result["data"][0]["currencyCode"];
-  country_name = result["data"][0]["countryName"];
+  countryName = result["data"][0]["countryName"];
+  countryName = countryName.replace(" ", "+");
   $("#capital").html(capital);
   $("#population").html(formatPopulation(result["data"][0]["population"]));
   $("#area").html(
@@ -158,9 +161,8 @@ $("#countries").change(function () {
         console.log(result);
         setFlag($("#countries").val());
         setCountryInfo(result);
-        getWeatherData();
-        getExchangeRateData();
         getWikipedia();
+        getExchangeRateData();
         country_code = $("#countries").val();
         if (borderLayer) {
           mymap.removeLayer(borderLayer);
@@ -196,32 +198,37 @@ function applyCountryBorder(iso2) {
         }).addTo(mymap);
         mymap.addLayer(borderLayer);
         mymap.fitBounds(borderLayer.getBounds());
+        addPOI(countryName);
       }
     },
   });
 }
 
-function addPOI() {
+function addPOI(countryName) {
   $.ajax({
     url: "libs/php/getPOI.php",
-    type: "POST",
+    type: "GET",
     dataType: "json",
     data: {
-      capital: capital,
+      countryName: countryName,
     },
     success: function (result) {
       console.log(result);
-      // if (result.status.code == 200) {
-      //   borderLayer = L.geoJSON(result, {
-      //     color: "blue",
-      //     weight: 3,
-      //     opacity: 1,
-      //     fillOpacity: 0.0,
-      //     dashArray: 20,
-      //   }).addTo(mymap);
-      //   mymap.addLayer(borderLayer);
-      //   mymap.fitBounds(borderLayer.getBounds());
-      // }
+      dataDump = result;
+      if (result.status.code == 200) {
+        for (let i = 0; i < result.data.results.length; i++) {
+          if (markers != undefined) {
+            mymap.removeLayer(markers);
+          }
+          markers.addLayer(
+            L.marker([
+              result.data.results[i].geometry.location.lat,
+              result.data.results[i].geometry.location.lng,
+            ]).bindPopup(`${result.data.results[i].name}`)
+          );
+        }
+        mymap.addLayer(markers);
+      }
     },
   });
 }
@@ -231,7 +238,6 @@ function getExchangeRateData() {
     url: "libs/php/getExchange.php",
     type: "POST",
     dataType: "json",
-
     success: function (result) {
       if (result) {
         console.log(result);
@@ -331,7 +337,7 @@ function getWikipedia() {
     type: "POST",
     dataType: "json",
     data: {
-      q: country_name,
+      q: countryName,
     },
     success: function (result) {
       $("#wikipedia").html(`${result["data"][0]["summary"]}`);

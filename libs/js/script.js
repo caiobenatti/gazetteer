@@ -205,7 +205,7 @@ function applyCountryBorder(iso2) {
 
 function addPOI() {
   $.ajax({
-    url: "libs/php/getPOI.php",
+    url: "libs/php/getUnesco.php",
     type: "POST",
     dataType: "json",
     data: {
@@ -215,15 +215,16 @@ function addPOI() {
       console.log(result);
       dataDump = result;
       if (result.status.code == 200) {
+        if (markers != undefined) {
+          markers.clearLayers();
+        }
         for (let i = 0; i < result.data.records.length; i++) {
-          if (markers != undefined) {
-            mymap.removeLayer(markers);
-          }
           markers.addLayer(
             L.marker([
               result.data.records[i].fields.latitude,
               result.data.records[i].fields.longitude,
-            ]).bindPopup(`${result.data.records[i].fields.name_en}`)
+            ]).bindPopup(`Name: ${result.data.records[i].fields.name_en} <br>
+            Description: ${result.data.records[i].fields.short_description_en} `)
           );
         }
         mymap.addLayer(markers);
@@ -238,25 +239,25 @@ function getExchangeRateData() {
     type: "POST",
     dataType: "json",
     success: function (result) {
-      // if (result) {
-      //   $("#currency").html(`${currency}`);
-      //   $("#exchangeRate").html(
-      //     `${currency}/USD <span class="bold">${result[0]["data"]["rates"][
-      //       currency
-      //     ].toFixed(2)} / ${result[0]["data"]["rates"]["USD"].toFixed(
-      //       2
-      //     )}</span><br>`
-      //   );
-      //   xs = [];
-      //   ys = [];
-      //   for (let i = 0; i < result.length; i++) {
-      //     ys.push(result[i]["data"]["rates"][currency]);
-      //     xs.push(timeConverter(result[i]["data"]["timestamp"]));
-      //   }
-      //   xs.reverse();
-      //   ys.reverse();
-      //   updateChart();
-      // }
+      if (result) {
+        $("#currency").html(`${currency}`);
+        $("#exchangeRate").html(
+          `${currency}/USD <span class="bold">${result[0]["data"]["rates"][
+            currency
+          ].toFixed(2)} / ${result[0]["data"]["rates"]["USD"].toFixed(
+            2
+          )}</span><br>`
+        );
+        xs = [];
+        ys = [];
+        for (let i = 0; i < result.length; i++) {
+          ys.push(result[i]["data"]["rates"][currency]);
+          xs.push(timeConverter(result[i]["data"]["timestamp"]));
+        }
+        xs.reverse();
+        ys.reverse();
+        updateChart();
+      }
     },
     error: function (jqXHR, textStatus, errorThrown) {
       alert(`Error in exchange: ${textStatus} ${errorThrown} ${jqXHR}`);
@@ -295,7 +296,7 @@ function getWeatherData() {
         $("#sysCountry").html(`${country_code}`);
         $("#nameWeather").html(`${capital}`);
         $("#iconWeather").html(
-          "<img src='http://openweathermap.org/img/wn/" +
+          "<img src='https://openweathermap.org/img/wn/" +
             result["data"]["daily"][0]["weather"][0]["icon"] +
             "@4x.png'>"
         );
@@ -309,7 +310,7 @@ function getWeatherData() {
           $("#days").append(`<li><span class="day-name">${timeConverter(
             result["data"]["daily"][i].dt
           )}</span>
-                 <div><img src='http://openweathermap.org/img/wn/${
+                 <div><img src='https://openweathermap.org/img/wn/${
                    result["data"]["daily"][i]["weather"][0]["icon"]
                  }.png'> </div><br>
                  <div class="temperature">${Math.round(

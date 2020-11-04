@@ -3,7 +3,9 @@
 
 $executionStartTime = microtime(true) / 1000;
 
-$url = 'https://examples.opendatasoft.com/api/records/1.0/search/?dataset=world-heritage-unesco-list&q='. $_REQUEST['q']. '&rows=60&facet=category&facet=country_en&facet=continent_en';
+//$url = 'https://examples.opendatasoft.com/api/records/1.0/search/?dataset=world-heritage-unesco-list&q='. $_REQUEST['q']. '&rows=60&facet=category&facet=country_en&facet=continent_en';
+$url = 'https://data.opendatasoft.com/api/records/1.0/search/?dataset=world-heritage-list%40public-us&q='. $_REQUEST['q']. '&lang=en&rows=60&facet=states';
+
 
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, false);

@@ -132,12 +132,25 @@ L.easyButton(
   "Satellite View"
 ).addTo(mymap);
 
+L.easyButton(
+  "fa-landmark",
+  function () {
+    if (mymap.hasLayer(markers)) {
+      mymap.removeLayer(markers);
+    } else {
+      mymap.addLayer(markers);
+    }
+  },
+  "Remove Markers"
+).addTo(mymap);
+
 // Set all the country info
 function setCountryInfo(result) {
   capital = result["data"][0]["capital"];
   currency = result["data"][0]["currencyCode"];
   countryName = result["data"][0]["countryName"];
   countryName = countryName.replace(" ", "+");
+  geoNameID = result["data"][0]["geonameId"];
   $("#capital").html(capital);
   $("#population").html(formatPopulation(result["data"][0]["population"]));
   $("#area").html(
@@ -158,6 +171,7 @@ $("#countries").change(function () {
     },
     success: function (result) {
       if (result.status.code == 200) {
+        console.log(result);
         setFlag($("#countries").val());
         setCountryInfo(result);
         getWikipedia();
@@ -197,7 +211,8 @@ function applyCountryBorder(iso2) {
         }).addTo(mymap);
         mymap.addLayer(borderLayer);
         mymap.fitBounds(borderLayer.getBounds());
-        addPOI(countryName);
+        addPOI();
+        getWeatherData();
       }
     },
   });
@@ -221,10 +236,11 @@ function addPOI() {
         for (let i = 0; i < result.data.records.length; i++) {
           markers.addLayer(
             L.marker([
-              result.data.records[i].fields.latitude,
-              result.data.records[i].fields.longitude,
-            ]).bindPopup(`Name: ${result.data.records[i].fields.name_en} <br>
-            Description: ${result.data.records[i].fields.short_description_en} `)
+              result.data.records[i].fields.coordinates[0],
+              result.data.records[i].fields.coordinates[1],
+            ]).bindPopup(`Name: ${result.data.records[i].fields.site} <br><br>
+            Description: ${result.data.records[i].fields.short_description} <br>
+             <a href='${result.data.records[i].fields.http_url}' target="_blank">Unesco website</a>`)
           );
         }
         mymap.addLayer(markers);
@@ -240,23 +256,23 @@ function getExchangeRateData() {
     dataType: "json",
     success: function (result) {
       if (result) {
-        $("#currency").html(`${currency}`);
-        $("#exchangeRate").html(
-          `${currency}/USD <span class="bold">${result[0]["data"]["rates"][
-            currency
-          ].toFixed(2)} / ${result[0]["data"]["rates"]["USD"].toFixed(
-            2
-          )}</span><br>`
-        );
-        xs = [];
-        ys = [];
-        for (let i = 0; i < result.length; i++) {
-          ys.push(result[i]["data"]["rates"][currency]);
-          xs.push(timeConverter(result[i]["data"]["timestamp"]));
-        }
-        xs.reverse();
-        ys.reverse();
-        updateChart();
+        // $("#currency").html(`${currency}`);
+        // $("#exchangeRate").html(
+        //   `${currency}/USD <span class="bold">${result[0]["data"]["rates"][
+        //     currency
+        //   ].toFixed(2)} / ${result[0]["data"]["rates"]["USD"].toFixed(
+        //     2
+        //   )}</span><br>`
+        // );
+        // xs = [];
+        // ys = [];
+        // for (let i = 0; i < result.length; i++) {
+        //   ys.push(result[i]["data"]["rates"][currency]);
+        //   xs.push(timeConverter(result[i]["data"]["timestamp"]));
+        // }
+        // xs.reverse();
+        // ys.reverse();
+        // updateChart();
       }
     },
     error: function (jqXHR, textStatus, errorThrown) {
@@ -275,6 +291,7 @@ function getWeatherData() {
     },
     success: function (result) {
       if (result.status.code == 200) {
+        console.log(result);
         $("#temperature").html(
           `${Math.round(
             result["data"]["daily"][0]["temp"]["day"]
@@ -340,7 +357,8 @@ function getWikipedia() {
     success: function (result) {
       $("#wikipedia").html(`${result["data"][0]["summary"]}`);
       $("#wikiurl").html(
-        `<a href='http://${result["data"][0]["wikipediaUrl"]}' target="_blank">${result["data"][0]["wikipediaUrl"]} </a>`
+        `More info: <a href='http://${result["data"][0]["wikipediaUrl"]}' target="_blank">${result["data"][0]["wikipediaUrl"]} </a><br>
+         <img src="${result["data"][0]["thumbnailImg"]}">`
       );
     },
     error: function (jqXHR, textStatus, errorThrown) {
@@ -368,8 +386,7 @@ function setFlag(iso2) {
 }
 
 //chart functions
-async function updateChart() {
-  await getWeatherData();
+function updateChart() {
   let myChart = null;
   if (myChart != null) {
     myChart.destroy();

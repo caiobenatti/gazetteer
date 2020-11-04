@@ -44,7 +44,9 @@ function getCountryList() {
     type: "GET",
     dataType: "json",
     success: function (result) {
-      if (result[0].code == 200) {
+      console.log(result);
+      dataDump = result;
+      if (result[0] == 200) {
         $("#countries").append(
           `<option value="" disabled selected>Select a country</option>`
         );
@@ -227,7 +229,6 @@ function addPOI() {
     },
     success: function (result) {
       console.log(result);
-      dataDump = result;
       if (result.status.code == 200) {
         if (markers != undefined) {
           markers.clearLayers();

@@ -1,6 +1,6 @@
 <?php
 
-$string = file_get_contents('././util/countryBorders.json');
+$string = file_get_contents('../util/countryBorders.json');
 
 $array = json_decode($string, true);
 

@@ -1,6 +1,6 @@
 <?php
 
-$string = file_get_contents('countryBorders.json');
+$string = file_get_contents('././util/countryBorders.json');
 
 $array = json_decode($string, true);
 
@@ -8,7 +8,7 @@ $feature = $array['features'];
 $output;
 
 	foreach ($feature as $key => $value) {
-        if ($_REQUEST['code'] == $value['properties']['iso_a2']) {
+        if ($_REQUEST['code'] == $value['properties']['name']) {
 			$output = $value;
 		}
 	}

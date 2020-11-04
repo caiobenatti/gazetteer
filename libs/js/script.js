@@ -4,10 +4,10 @@ let lat;
 let lng;
 let countryName;
 let borderLayer;
+let iso2;
 let currency;
 let mymap = L.map("mapid").setView([51.505, -0.09], 5);
 let dataDump;
-let country_code;
 // let today = new Date().toJSON().slice(0, 10);
 // let tenDays = new Date(new Date().valueOf() - 1000 * 60 * 60 * 24 * 10)
 //   .toJSON()
@@ -50,7 +50,7 @@ function getCountryList() {
         );
         for (i = 1; i < result.length; i++) {
           $("#countries").append(
-            `<option value="${result[i].iso_a2}">${result[i].name}</option>`
+            `<option value="${result[i].name}">${result[i].name}</option>`
           );
         }
       }
@@ -147,16 +147,17 @@ L.easyButton(
 // Set all the country info
 function setCountryInfo(result) {
   capital = result["data"][0]["capital"];
-  currency = result["data"][0]["currencyCode"];
-  countryName = result["data"][0]["countryName"];
+  currency = result["data"][0]["currencies"][0]["code"];
+  countryName = result["data"][0]["name"];
   countryName = countryName.replace(" ", "+");
   geoNameID = result["data"][0]["geonameId"];
+  iso2 = result["data"][0]["alpha2Code"];
   $("#capital").html(capital);
   $("#population").html(formatPopulation(result["data"][0]["population"]));
-  $("#area").html(
-    `${formatArea(result["data"][0]["areaInSqKm"])} km<sup>2</sup>`
-  );
-  $("#continent").html(result["data"][0]["continentName"]);
+  $("#area").html(`${formatArea(result["data"][0]["area"])} km<sup>2</sup>`);
+  $("#continent").html(result["data"][0]["region"]);
+  //reseting the html to append new
+  $("#country-flag").html(`<img src="${result["data"][0]["flag"]}">`);
 }
 
 // Changes on country selection
@@ -167,16 +168,14 @@ $("#countries").change(function () {
     dataType: "json",
     data: {
       country: $("#countries").val(),
-      lang: "en",
     },
     success: function (result) {
       if (result.status.code == 200) {
         console.log(result);
-        setFlag($("#countries").val());
         setCountryInfo(result);
         getWikipedia();
         getExchangeRateData();
-        country_code = $("#countries").val();
+        // country_code = $("#countries").val();
         if (borderLayer) {
           mymap.removeLayer(borderLayer);
         }
@@ -310,7 +309,7 @@ function getWeatherData() {
         $("#humidity").html(
           `Humidity: <span class="bold">${result["data"]["daily"][0]["humidity"]}</span> % - Wind speed: <span class="bold">${result["data"]["daily"][0]["wind_speed"]}</span>`
         );
-        $("#sysCountry").html(`${country_code}`);
+        $("#sysCountry").html(`${iso2}`);
         $("#nameWeather").html(`${capital}`);
         $("#iconWeather").html(
           "<img src='https://openweathermap.org/img/wn/" +
@@ -376,13 +375,6 @@ function updateMarker(lng, lat) {
     .addTo(mymap)
     .bindPopup(`Capital City: ${capital}`)
     .openPopup();
-}
-
-//Sets the flag for the Country
-function setFlag(iso2) {
-  $("#country-flag").html(
-    `<img src="https://www.countryflags.io/${iso2}/flat/64.png">`
-  );
 }
 
 //chart functions

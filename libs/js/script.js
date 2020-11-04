@@ -44,8 +44,6 @@ function getCountryList() {
     type: "GET",
     dataType: "json",
     success: function (result) {
-      console.log(result);
-      dataDump = result;
       if (result[0] == 200) {
         $("#countries").append(
           `<option value="" disabled selected>Select a country</option>`
@@ -108,6 +106,14 @@ L.easyButton(
 ).addTo(mymap);
 
 L.easyButton(
+  "fa-camera",
+  function () {
+    $("#APOD").modal("show");
+  },
+  "Astronomy picture of the Day"
+).addTo(mymap);
+
+L.easyButton(
   "fa-street-view",
   function () {
     L.tileLayer(
@@ -158,8 +164,31 @@ function setCountryInfo(result) {
   $("#population").html(formatPopulation(result["data"][0]["population"]));
   $("#area").html(`${formatArea(result["data"][0]["area"])} km<sup>2</sup>`);
   $("#continent").html(result["data"][0]["region"]);
-  //reseting the html to append new
+  $("#subcontinent").html(result["data"][0]["subregion"]);
+  $("#nativeName").html(result["data"][0]["nativeName"]);
   $("#country-flag").html(`<img src="${result["data"][0]["flag"]}">`);
+  $("#languages").html("");
+  let lang = [];
+  for (let i = 0; i < result.data[0].languages.length; i++) {
+    lang.push(`${result.data[0].languages[i].name}`);
+  }
+  lang.join(",");
+  $("#languages").append(`<span> ${lang}</span>`);
+  let bord = [];
+  $("#borders").html("");
+  for (let i = 0; i < result.data[0].borders.length; i++) {
+    bord.push(`${result.data[0].borders[i]}`);
+  }
+  bord.join(",");
+  $("#borders").append(`<span> ${bord}</span>`);
+  // $("#timeZone").html(result["data"][0]["timezones"]);
+  let tz = [];
+  $("#timeZone").html("");
+  for (let i = 0; i < result.data[0].timezones.length; i++) {
+    tz.push(`${result["data"][0]["timezones"][i]}`);
+  }
+  tz.join(",");
+  $("#timeZone").append(`<span> ${tz}</span>`);
 }
 
 // Changes on country selection
@@ -174,6 +203,7 @@ $("#countries").change(function () {
     success: function (result) {
       if (result.status.code == 200) {
         console.log(result);
+        dataDump = result;
         setCountryInfo(result);
         getWikipedia();
         getExchangeRateData();

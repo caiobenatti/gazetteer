@@ -396,6 +396,38 @@ function getWikipedia() {
   });
 }
 
+function getPhotos() {
+  $.ajax({
+    url: "libs/php/getPhotos.php",
+    type: "POST",
+    dataType: "json",
+    success: function (result) {
+      dataDump = result;
+      let markup = "";
+      for (let i = 0; i < 15; i++) {
+        markup += `<li data-target="#carousel-deck" data-slide-to="${i}"></li>`;
+      }
+      $("#carousel-deck .carousel-indicators").html(markup);
+      markup = "";
+      for (let i = 0; i < 15; i++) {
+        markup += '<div class="carousel-item">';
+        markup += `<img src="https://live.staticflickr.com/${result.data.photos.photo[i].farm}/${result.data.photos.photo[i].id}_${result.data.photos.photo[i].secret}_w.jpg">`;
+        markup += "</div>";
+      }
+      $("#carousel-deck .carousel-inner").html(markup);
+      $("#carousel-deck .item").first().addClass("active");
+      $("#carousel-deck .carousel-indicators > li").first().addClass("active");
+      $("#carousel-deck").carousel({
+        pause: true,
+        interval: false,
+      });
+    },
+    error: function (jqXHR, textStatus, errorThrown) {
+      console.log(textStatus, errorThrown, jqXHR);
+    },
+  });
+}
+
 //update the marker for the country capital
 function updateMarker(lng, lat) {
   if (locationMarker != undefined) {

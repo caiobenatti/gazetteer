@@ -108,7 +108,7 @@ L.easyButton(
 L.easyButton(
   "fa-camera",
   function () {
-    $("#APOD").modal("show");
+    $("#photos").modal("show");
   },
   "Astronomy picture of the Day"
 ).addTo(mymap);
@@ -270,7 +270,7 @@ function addPOI() {
               result.data.records[i].fields.coordinates[1],
             ]).bindPopup(`Name: ${result.data.records[i].fields.site} <br><br>
             Description: ${result.data.records[i].fields.short_description} <br>
-             <a href='${result.data.records[i].fields.http_url}' target="_blank">Unesco website</a>`)
+             <a href='${result.data.records[i].fields.http_url}' target="_blank" class="customA">Unesco website</a>`)
           );
         }
         mymap.addLayer(markers);
@@ -387,7 +387,7 @@ function getWikipedia() {
     success: function (result) {
       $("#wikipedia").html(`${result["data"][0]["summary"]}`);
       $("#wikiurl").html(
-        `More info: <a href='http://${result["data"][0]["wikipediaUrl"]}' target="_blank">${result["data"][0]["wikipediaUrl"]} </a>`
+        `More info: <a href='http://${result["data"][0]["wikipediaUrl"]}' target="_blank" class="customA">${result["data"][0]["wikipediaUrl"]} </a>`
       );
     },
     error: function (jqXHR, textStatus, errorThrown) {

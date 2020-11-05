@@ -2,8 +2,7 @@
 
 
 $executionStartTime = microtime(true) / 1000;
-
-$url = 'https://api.nasa.gov/planetary/apod?api_key=5NNR3dp7QwCx2qrMn9iCbFZeng8Z3kGIaCleDgP0&start_date=' . date("Y-m-d", time() - 60 * 60 *24 * 4) . '&end_date=' . date("Y-m-d");
+$url = 'https://www.flickr.com/services/rest/?method=flickr.photos.search&api_key=84646e53dce75abf02d3921e9c1dc9d5&text=united+kingdom&per_page=&format=json&nojsoncallback=1&auth_token=72157716769376107-8ced23f4d75801ac&api_sig=6436777a8f85d9a5f4e4e47bcb6ada25';
 
 
 $ch = curl_init();
@@ -26,3 +25,6 @@ curl_close($ch);
  header('Content-Type: application/json; charset=UTF-8');
  
  echo json_encode($output); 
+
+
+// https://live.staticflickr.com/{server-id}/{id}_{secret}_{size-suffix}.jpg

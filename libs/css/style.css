@@ -94,7 +94,7 @@ select {
   text-align: center;
 }
 
-a {
+.customA {
   background: linear-gradient(to right, black, orange);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;

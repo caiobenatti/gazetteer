@@ -94,6 +94,12 @@ select {
   text-align: center;
 }
 
+a {
+  background: linear-gradient(to right, black, orange);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
 .flag {
   margin-left: auto;
   margin-right: auto;

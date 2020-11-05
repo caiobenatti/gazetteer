@@ -387,8 +387,7 @@ function getWikipedia() {
     success: function (result) {
       $("#wikipedia").html(`${result["data"][0]["summary"]}`);
       $("#wikiurl").html(
-        `More info: <a href='http://${result["data"][0]["wikipediaUrl"]}' target="_blank">${result["data"][0]["wikipediaUrl"]} </a><br>
-         <img src="${result["data"][0]["thumbnailImg"]}">`
+        `More info: <a href='http://${result["data"][0]["wikipediaUrl"]}' target="_blank">${result["data"][0]["wikipediaUrl"]} </a>`
       );
     },
     error: function (jqXHR, textStatus, errorThrown) {

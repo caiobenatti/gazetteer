@@ -314,23 +314,23 @@ function getExchangeRateData() {
     dataType: "json",
     success: function (result) {
       if (result) {
-        // $("#currency").html(`${currency}`);
-        // $("#exchangeRate").html(
-        //   `${currency}/USD <span class="bold">${result[0]["data"]["rates"][
-        //     currency
-        //   ].toFixed(2)} / ${result[0]["data"]["rates"]["USD"].toFixed(
-        //     2
-        //   )}</span><br>`
-        // );
-        // xs = [];
-        // ys = [];
-        // for (let i = 0; i < result.length; i++) {
-        //   ys.push(result[i]["data"]["rates"][currency]);
-        //   xs.push(timeConverter(result[i]["data"]["timestamp"]));
-        // }
-        // xs.reverse();
-        // ys.reverse();
-        // updateChart();
+        $("#currency").html(`${currency}`);
+        $("#exchangeRate").html(
+          `${currency}/USD <span class="bold">${result[0]["data"]["rates"][
+            currency
+          ].toFixed(2)} / ${result[0]["data"]["rates"]["USD"].toFixed(
+            2
+          )}</span><br>`
+        );
+        xs = [];
+        ys = [];
+        for (let i = 0; i < result.length; i++) {
+          ys.push(result[i]["data"]["rates"][currency]);
+          xs.push(timeConverter(result[i]["data"]["timestamp"]));
+        }
+        xs.reverse();
+        ys.reverse();
+        updateChart();
       }
     },
     error: function (jqXHR, textStatus, errorThrown) {

@@ -21,6 +21,7 @@ let icon = L.icon({
   iconAnchor: [24, 40],
   popupAnchor: [0, -30],
 });
+let api_key = "563492ad6f9170000100000111ea22fd186042d187ad50892156775b";
 
 //navigator getting the geolocation from browser
 if (navigator.geolocation) {
@@ -244,6 +245,7 @@ function applyCountryBorder(iso2) {
         mymap.fitBounds(borderLayer.getBounds());
         addPOI();
         getWeatherData();
+        getPhotos();
       }
     },
   });
@@ -398,24 +400,25 @@ function getWikipedia() {
 
 function getPhotos() {
   $.ajax({
-    url: "libs/php/getPhotos.php",
-    type: "POST",
-    dataType: "json",
+    method: "GET",
+    beforeSend: function (xhr) {
+      xhr.setRequestHeader("Authorization", api_key);
+    },
+    url: `https://api.pexels.com/v1/search?query=${countryName}`,
     success: function (result) {
-      dataDump = result;
-      let markup = "";
-      for (let i = 0; i < 15; i++) {
-        markup += `<li data-target="#carousel-deck" data-slide-to="${i}"></li>`;
-      }
-      $("#carousel-deck .carousel-indicators").html(markup);
       markup = "";
-      for (let i = 0; i < 15; i++) {
+      for (let i = 0; i < result.photos.length; i++) {
         markup += '<div class="carousel-item">';
-        markup += `<img src="https://live.staticflickr.com/${result.data.photos.photo[i].farm}/${result.data.photos.photo[i].id}_${result.data.photos.photo[i].secret}_w.jpg">`;
+        markup += `<img src="${result.photos[i].src.original}">
+        <br>
+        `;
+        markup += `<p>${result.photos[i].photographer}</p><br>`;
+        markup += `<a href='${result.photos[i].url}' target="_blank" class="customA">View on Pexels</a> <br>`;
+
         markup += "</div>";
       }
       $("#carousel-deck .carousel-inner").html(markup);
-      $("#carousel-deck .item").first().addClass("active");
+      $("#carousel-deck .carousel-item").first().addClass("active");
       $("#carousel-deck .carousel-indicators > li").first().addClass("active");
       $("#carousel-deck").carousel({
         pause: true,

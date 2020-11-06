@@ -100,6 +100,15 @@ select {
   -webkit-text-fill-color: transparent;
 }
 
+.carousel-item {
+  width: 600px;
+  height: 600px;
+}
+
+.carousel-item img {
+  max-width: 100%;
+  max-height: 100%;
+}
 .flag {
   margin-left: auto;
   margin-right: auto;

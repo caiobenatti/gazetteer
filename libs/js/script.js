@@ -29,19 +29,37 @@ let landMarkIcon = L.icon({
   iconSize: [40, 40],
 });
 
-//navigator getting the geolocation from browser
+//Getting users lat/long
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(function (position) {
-    console.log("--- Your Position: ---");
-    console.log("Lat: " + position.coords.latitude);
-    lat = position.coords.latitude;
-    console.log("Long: " + position.coords.longitude);
-    lng = position.coords.longitude;
-    console.log("---------------------");
-    let popup = L.popup()
-      .setLatLng([lat, lng])
-      .setContent("You are here")
-      .openOn(mymap);
+    //Create query for the API.
+    let latitude = "latitude=" + position.coords.latitude;
+    let longitude = "&longitude=" + position.coords.longitude;
+    let query = latitude + longitude + "&localityLanguage=en";
+
+    const Http = new XMLHttpRequest();
+
+    var bigdatacloud_api =
+      "https://api.bigdatacloud.net/data/reverse-geocode-client?";
+
+    bigdatacloud_api += query;
+
+    Http.open("GET", bigdatacloud_api);
+    Http.send();
+
+    Http.onreadystatechange = function () {
+      if (this.readyState == 4 && this.status == 200) {
+        var myObj = JSON.parse(this.responseText);
+        getCountry(myObj.countryName);
+        locationMarker = L.marker([
+          position.coords.longitude,
+          position.coords.latitude,
+        ])
+          .addTo(mymap)
+          .bindPopup(`You are here!`)
+          .openPopup();
+      }
+    };
   });
 }
 
@@ -199,30 +217,31 @@ function setCountryInfo(result) {
 
 // Changes on country selection
 $("#countries").change(function () {
+  getCountry($("#countries").val());
+});
+
+function getCountry(country) {
   $.ajax({
     url: "libs/php/getCountryInfo.php",
     type: "POST",
     dataType: "json",
     data: {
-      country: $("#countries").val(),
+      country: country,
     },
     success: function (result) {
       if (result.status.code == 200) {
-        console.log(result);
         setCountryInfo(result);
-        getWikipedia();
-        getExchangeRateData();
         if (borderLayer) {
           mymap.removeLayer(borderLayer);
         }
-        applyCountryBorder($("#countries").val());
+        applyCountryBorder(country);
       }
     },
     error: function (jqXHR, textStatus, errorThrown) {
       alert(`${textStatus} ${errorThrown}`);
     },
   });
-});
+}
 
 //Function for APIS
 
@@ -249,6 +268,8 @@ function applyCountryBorder(iso2) {
         addPOI();
         getWeatherData();
         getPhotos();
+        getWikipedia();
+        getExchangeRateData();
       }
     },
   });
@@ -263,7 +284,6 @@ function addPOI() {
       q: countryName,
     },
     success: function (result) {
-      console.log(result);
       if (result.status.code == 200) {
         if (markers != undefined) {
           markers.clearLayers();
@@ -329,7 +349,6 @@ function getWeatherData() {
     },
     success: function (result) {
       if (result.status.code == 200) {
-        console.log(result);
         $("#temperature").html(
           `${Math.round(
             result["data"]["daily"][0]["temp"]["day"]

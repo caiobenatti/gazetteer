@@ -278,7 +278,7 @@ function addPOI() {
               ],
               { icon: landMarkIcon }
             ).bindPopup(`Name: ${result.data.records[i].fields.site} <br><br>
-            Description: ${result.data.records[i].fields.short_description} <br>
+            Description: ${result.data.records[i].fields.short_description} <br><br>
              <a href='${result.data.records[i].fields.http_url}' target="_blank" class="customA">Unesco website</a>`)
           );
         }
@@ -422,8 +422,8 @@ function getPhotos(q) {
         markup += `<img src="${result.data.photos[i].src.portrait}">
         <br><br>
         `;
-        markup += `<p>${result.data.photos[i].photographer}</p><br>`;
-        markup += `<a href='${result.data.photos[i].url}' target="_blank" class="customA">View on Pexels</a> <br>`;
+        markup += `<a href='${result.data.photos[i].photographer_url}' target="_blank" class="customA">${result.data.photos[i].photographer}(view page on Pexels)</a> <br><br>`;
+        markup += `<a href='${result.data.photos[i].url}' target="_blank" class="customA">View Photo on Pexels</a> <br>`;
 
         markup += "</div>";
       }

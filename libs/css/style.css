@@ -100,6 +100,7 @@ select {
   background-image: linear-gradient(to right, #ccebff, #66c2ff);
   text-align: center;
   font-family: "Montserrat", sans-serif;
+  width: auto;
 }
 
 .customA {
@@ -110,7 +111,7 @@ select {
 
 .carousel-item {
   width: 600px;
-  height: 800px;
+  height: 750px;
 }
 
 .carousel-item img {
@@ -119,11 +120,12 @@ select {
 }
 
 .close {
-  align-items: center;
-  justify-content: center;
-  margin: 0.5em;
-  /* margin-top: 0.3em; */
-  size: 0.2em;
+  justify-content: left;
+  margin: 0;
+  margin-left: auto;
+  margin-right: 1.5em;
+  margin-top: 0.9em;
+  size: 1em;
 }
 
 .flag {

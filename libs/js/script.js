@@ -28,7 +28,6 @@ let landMarkIcon = L.icon({
   popupAnchor: [0, -30],
   iconSize: [40, 40],
 });
-let api_key = "563492ad6f9170000100000111ea22fd186042d187ad50892156775b";
 
 //navigator getting the geolocation from browser
 if (navigator.geolocation) {
@@ -118,7 +117,7 @@ L.easyButton(
   function () {
     $("#photos").modal("show");
   },
-  "Astronomy picture of the Day"
+  "Pictures of the country"
 ).addTo(mymap);
 
 L.easyButton(
@@ -210,7 +209,6 @@ $("#countries").change(function () {
     success: function (result) {
       if (result.status.code == 200) {
         console.log(result);
-        dataDump = result;
         setCountryInfo(result);
         getWikipedia();
         getExchangeRateData();
@@ -408,20 +406,22 @@ function getWikipedia() {
 
 function getPhotos() {
   $.ajax({
-    method: "GET",
-    beforeSend: function (xhr) {
-      xhr.setRequestHeader("Authorization", api_key);
+    url: "libs/php/getPhotos.php",
+    type: "GET",
+    dataType: "json",
+    data: {
+      q: countryName,
     },
-    url: `https://api.pexels.com/v1/search?query=${countryName}`,
     success: function (result) {
+      dataDump = result;
       markup = "";
-      for (let i = 0; i < result.photos.length; i++) {
+      for (let i = 0; i < result.data.photos.length; i++) {
         markup += '<div class="carousel-item">';
-        markup += `<img src="${result.photos[i].src.original}">
-        <br>
+        markup += `<img src="${result.data.photos[i].src.portrait}">
+        <br><br>
         `;
-        markup += `<p>${result.photos[i].photographer}</p><br>`;
-        markup += `<a href='${result.photos[i].url}' target="_blank" class="customA">View on Pexels</a> <br>`;
+        markup += `<p>${result.data.photos[i].photographer}</p><br>`;
+        markup += `<a href='${result.data.photos[i].url}' target="_blank" class="customA">View on Pexels</a> <br>`;
 
         markup += "</div>";
       }
@@ -481,7 +481,7 @@ function formatPopulation(num) {
   if (pop / 1000000 > 1) {
     return `${(pop / 1000000).toFixed(2)} m`;
   } else if (pop / 1000 > 1) {
-    return `${(pop / 1000).toFixed(2)} thousand`;
+    return `${(pop / 1000).toFixed(2)} k`;
   } else {
     return `${pop.toFixed()}`;
   }
@@ -492,7 +492,7 @@ function formatArea(num) {
   if (area / 1000000 > 1) {
     return `${(area / 1000000).toFixed(2)} m`;
   } else if (area / 1000 > 1) {
-    return `${(area / 1000).toFixed(2).toString()} thousand`;
+    return `${(area / 1000).toFixed(2).toString()} k`;
   } else {
     return `${area}`;
   }

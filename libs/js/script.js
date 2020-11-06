@@ -164,7 +164,7 @@ function setCountryInfo(result) {
   capital = result["data"][0]["capital"];
   currency = result["data"][0]["currencies"][0]["code"];
   countryName = result["data"][0]["name"];
-  countryName = countryName.replace(" ", "+");
+  countryName = countryName.replace(/\s/g, "+");
   geoNameID = result["data"][0]["geonameId"];
   iso2 = result["data"][0]["alpha2Code"];
   $("#capital").html(capital);
@@ -216,6 +216,7 @@ $("#countries").change(function () {
           mymap.removeLayer(borderLayer);
         }
         applyCountryBorder($("#countries").val());
+        getPhotos($("#countries").val());
       }
     },
     error: function (jqXHR, textStatus, errorThrown) {
@@ -294,23 +295,23 @@ function getExchangeRateData() {
     dataType: "json",
     success: function (result) {
       if (result) {
-        $("#currency").html(`${currency}`);
-        $("#exchangeRate").html(
-          `${currency}/USD <span class="bold">${result[0]["data"]["rates"][
-            currency
-          ].toFixed(2)} / ${result[0]["data"]["rates"]["USD"].toFixed(
-            2
-          )}</span><br>`
-        );
-        xs = [];
-        ys = [];
-        for (let i = 0; i < result.length; i++) {
-          ys.push(result[i]["data"]["rates"][currency]);
-          xs.push(timeConverter(result[i]["data"]["timestamp"]));
-        }
-        xs.reverse();
-        ys.reverse();
-        updateChart();
+        // $("#currency").html(`${currency}`);
+        // $("#exchangeRate").html(
+        //   `${currency}/USD <span class="bold">${result[0]["data"]["rates"][
+        //     currency
+        //   ].toFixed(2)} / ${result[0]["data"]["rates"]["USD"].toFixed(
+        //     2
+        //   )}</span><br>`
+        // );
+        // xs = [];
+        // ys = [];
+        // for (let i = 0; i < result.length; i++) {
+        //   ys.push(result[i]["data"]["rates"][currency]);
+        //   xs.push(timeConverter(result[i]["data"]["timestamp"]));
+        // }
+        // xs.reverse();
+        // ys.reverse();
+        // updateChart();
       }
     },
     error: function (jqXHR, textStatus, errorThrown) {
@@ -404,17 +405,18 @@ function getWikipedia() {
   });
 }
 
-function getPhotos() {
+function getPhotos(q) {
   $.ajax({
     url: "libs/php/getPhotos.php",
     type: "GET",
     dataType: "json",
     data: {
-      q: countryName,
+      q: q,
     },
     success: function (result) {
       dataDump = result;
       markup = "";
+      $("#carousel-deck .carousel-inner").html("");
       for (let i = 0; i < result.data.photos.length; i++) {
         markup += '<div class="carousel-item">';
         markup += `<img src="${result.data.photos[i].src.portrait}">

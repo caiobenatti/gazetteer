@@ -17,9 +17,16 @@ let ys = [];
 let markers = L.markerClusterGroup();
 let markerCluster;
 let icon = L.icon({
-  iconUrl: "./libs/misc/map-pin.png",
+  iconUrl: "./libs/misc/map-pin.svg",
   iconAnchor: [24, 40],
   popupAnchor: [0, -30],
+  iconSize: [40, 40],
+});
+let landMarkIcon = L.icon({
+  iconUrl: "./libs/misc/mecca.svg",
+  iconAnchor: [24, 40],
+  popupAnchor: [0, -30],
+  iconSize: [40, 40],
 });
 let api_key = "563492ad6f9170000100000111ea22fd186042d187ad50892156775b";
 
@@ -182,7 +189,6 @@ function setCountryInfo(result) {
   }
   bord.join(",");
   $("#borders").append(`<span> ${bord}</span>`);
-  // $("#timeZone").html(result["data"][0]["timezones"]);
   let tz = [];
   $("#timeZone").html("");
   for (let i = 0; i < result.data[0].timezones.length; i++) {
@@ -208,7 +214,6 @@ $("#countries").change(function () {
         setCountryInfo(result);
         getWikipedia();
         getExchangeRateData();
-        // country_code = $("#countries").val();
         if (borderLayer) {
           mymap.removeLayer(borderLayer);
         }
@@ -267,10 +272,13 @@ function addPOI() {
         }
         for (let i = 0; i < result.data.records.length; i++) {
           markers.addLayer(
-            L.marker([
-              result.data.records[i].fields.coordinates[0],
-              result.data.records[i].fields.coordinates[1],
-            ]).bindPopup(`Name: ${result.data.records[i].fields.site} <br><br>
+            L.marker(
+              [
+                result.data.records[i].fields.coordinates[0],
+                result.data.records[i].fields.coordinates[1],
+              ],
+              { icon: landMarkIcon }
+            ).bindPopup(`Name: ${result.data.records[i].fields.site} <br><br>
             Description: ${result.data.records[i].fields.short_description} <br>
              <a href='${result.data.records[i].fields.http_url}' target="_blank" class="customA">Unesco website</a>`)
           );
@@ -288,23 +296,23 @@ function getExchangeRateData() {
     dataType: "json",
     success: function (result) {
       if (result) {
-        // $("#currency").html(`${currency}`);
-        // $("#exchangeRate").html(
-        //   `${currency}/USD <span class="bold">${result[0]["data"]["rates"][
-        //     currency
-        //   ].toFixed(2)} / ${result[0]["data"]["rates"]["USD"].toFixed(
-        //     2
-        //   )}</span><br>`
-        // );
-        // xs = [];
-        // ys = [];
-        // for (let i = 0; i < result.length; i++) {
-        //   ys.push(result[i]["data"]["rates"][currency]);
-        //   xs.push(timeConverter(result[i]["data"]["timestamp"]));
-        // }
-        // xs.reverse();
-        // ys.reverse();
-        // updateChart();
+        $("#currency").html(`${currency}`);
+        $("#exchangeRate").html(
+          `${currency}/USD <span class="bold">${result[0]["data"]["rates"][
+            currency
+          ].toFixed(2)} / ${result[0]["data"]["rates"]["USD"].toFixed(
+            2
+          )}</span><br>`
+        );
+        xs = [];
+        ys = [];
+        for (let i = 0; i < result.length; i++) {
+          ys.push(result[i]["data"]["rates"][currency]);
+          xs.push(timeConverter(result[i]["data"]["timestamp"]));
+        }
+        xs.reverse();
+        ys.reverse();
+        updateChart();
       }
     },
     error: function (jqXHR, textStatus, errorThrown) {

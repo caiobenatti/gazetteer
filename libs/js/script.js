@@ -313,7 +313,6 @@ function getExchangeRateData() {
     type: "POST",
     dataType: "json",
     success: function (result) {
-      dataDump = result;
       if (result[0].status.code == 200) {
         $("#currency").html(`${currency}`);
         $("#exchangeRate").html(
@@ -348,6 +347,7 @@ function getWeatherData() {
     },
     success: function (result) {
       if (result.status.code == 200) {
+        dataDump = result;
         $("#temperature").html(
           `${Math.round(result.data.daily[0].temp.day)} <sup>o</sup>C `
         );
@@ -379,7 +379,7 @@ function getWeatherData() {
         //loop through the data and append to the #days
         for (i = 1; i < 4; i++) {
           $("#days").append(`<li><span class="day-name">${timeConverter(
-            result.data.daily[i].dtF
+            result.data.daily[i].dt
           )}</span>
                  <div><img src='https://openweathermap.org/img/wn/${
                    result.data.daily[i].weather[0].icon

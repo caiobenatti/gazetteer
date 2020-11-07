@@ -179,19 +179,19 @@ L.easyButton(
 
 // Set all the country info
 function setCountryInfo(result) {
-  capital = result["data"][0]["capital"];
-  currency = result["data"][0]["currencies"][0]["code"];
-  countryName = result["data"][0]["name"];
-  countryName = countryName.replace(/\s/g, "+");
-  geoNameID = result["data"][0]["geonameId"];
-  iso2 = result["data"][0]["alpha2Code"];
+  capital = result.data[0].capital;
+  currency = result.data[0].currencies[0].code;
+  countryName = result.data[0].name.replace(/\s/g, "+");
+  // countryName = countryName.replace(/\s/g, "+");
+  geoNameID = result.data[0].geonameId;
+  iso2 = result.data[0].alpha2Code;
   $("#capital").html(capital);
-  $("#population").html(formatPopulation(result["data"][0]["population"]));
-  $("#area").html(`${formatArea(result["data"][0]["area"])} km<sup>2</sup>`);
-  $("#continent").html(result["data"][0]["region"]);
-  $("#subcontinent").html(result["data"][0]["subregion"]);
-  $("#nativeName").html(result["data"][0]["nativeName"]);
-  $("#country-flag").html(`<img src="${result["data"][0]["flag"]}">`);
+  $("#population").html(formatPopulation(result.data[0].population));
+  $("#area").html(`${formatArea(result.data[0].area)} km<sup>2</sup>`);
+  $("#continent").html(result.data[0].region);
+  $("#subcontinent").html(result.data[0].subregion);
+  $("#nativeName").html(result.data[0].nativeName);
+  $("#country-flag").html(`<img src="${result.data[0].flag}">`);
   $("#languages").html("");
   let lang = [];
   for (let i = 0; i < result.data[0].languages.length; i++) {
@@ -209,7 +209,7 @@ function setCountryInfo(result) {
   let tz = [];
   $("#timeZone").html("");
   for (let i = 0; i < result.data[0].timezones.length; i++) {
-    tz.push(`${result["data"][0]["timezones"][i]}`);
+    tz.push(`${result.data[0].timezones[i]}`);
   }
   tz.join(",");
   $("#timeZone").append(`<span> ${tz}</span>`);
@@ -313,20 +313,19 @@ function getExchangeRateData() {
     type: "POST",
     dataType: "json",
     success: function (result) {
-      if (result) {
+      dataDump = result;
+      if (result[0].status.code == 200) {
         $("#currency").html(`${currency}`);
         $("#exchangeRate").html(
-          `${currency}/USD <span class="bold">${result[0]["data"]["rates"][
+          `${currency}/USD <span class="bold">${result[0].data.rates[
             currency
-          ].toFixed(2)} / ${result[0]["data"]["rates"]["USD"].toFixed(
-            2
-          )}</span><br>`
+          ].toFixed(2)} / ${result[0].data.rates["USD"].toFixed(2)}</span><br>`
         );
         xs = [];
         ys = [];
         for (let i = 0; i < result.length; i++) {
-          ys.push(result[i]["data"]["rates"][currency]);
-          xs.push(timeConverter(result[i]["data"]["timestamp"]));
+          ys.push(result[i].data.rates[currency]);
+          xs.push(timeConverter(result[i].data.timestamp));
         }
         xs.reverse();
         ys.reverse();
@@ -350,51 +349,49 @@ function getWeatherData() {
     success: function (result) {
       if (result.status.code == 200) {
         $("#temperature").html(
-          `${Math.round(
-            result["data"]["daily"][0]["temp"]["day"]
-          )} <sup>o</sup>C `
+          `${Math.round(result.data.daily[0].temp.day)} <sup>o</sup>C `
         );
         $("#feelsLike").html(`<span class="temperature">
                 feels like <span class="bold">${Math.round(
-                  result["data"]["daily"][0]["feels_like"]["day"]
+                  result.data.daily[0].feels_like.day
                 )} </span><span class="degree">&#8451;</span>
                  - <span class="small">max</span> <span class="bold">${Math.round(
-                   result["data"]["daily"][0]["temp"].max
+                   result.data.daily[0].temp.max
                  )} </span> <span class="degree">&#8451;</span> 
                  / <span class="small">min</span> <span class="bold">${Math.round(
-                   result["data"]["daily"][0]["temp"].min
+                   result.data.daily[0].temp.min
                  )}</span> <span class="degree">&#8451;</span></span>`);
         $("#humidity").html(
-          `Humidity: <span class="bold">${result["data"]["daily"][0]["humidity"]}</span> % - Wind speed: <span class="bold">${result["data"]["daily"][0]["wind_speed"]}</span>`
+          `Humidity: <span class="bold">${result.data.daily[0].humidity}</span> % - Wind speed: <span class="bold">${result.data.daily[0].wind_speed}</span>`
         );
         $("#sysCountry").html(`${iso2}`);
         $("#nameWeather").html(`${capital}`);
         $("#iconWeather").html(
           "<img src='https://openweathermap.org/img/wn/" +
-            result["data"]["daily"][0]["weather"][0]["icon"] +
+            result.data.daily[0].weather[0].icon +
             "@4x.png'>"
         );
         $("#descriptionWeather").html(
-          `${result["data"]["daily"][0]["weather"][0]["description"]}`
+          `${result.data.daily[0].weather[0].description}`
         );
         //reseting the html to append new
         $("#days").html("");
         //loop through the data and append to the #days
         for (i = 1; i < 4; i++) {
           $("#days").append(`<li><span class="day-name">${timeConverter(
-            result["data"]["daily"][i].dt
+            result.data.daily[i].dtF
           )}</span>
                  <div><img src='https://openweathermap.org/img/wn/${
-                   result["data"]["daily"][i]["weather"][0]["icon"]
+                   result.data.daily[i].weather[0].icon
                  }.png'> </div><br>
                  <div class="temperature">${Math.round(
-                   result["data"]["daily"][i]["temp"].max
+                   result.data.daily[i].temp.max
                  )} <span class="degree">&#8451;</span> / ${Math.round(
-            result["data"]["daily"][i]["temp"].min
+            result.data.daily[i].temp.min
           )} <span class="degree">&#8451;</span></div>
                 </li>`);
         }
-        updateMarker(result["data"]["lat"], result["data"]["lon"]);
+        updateMarker(result.data.lat, result.data.lon);
       }
     },
     error: function (jqXHR, textStatus, errorThrown) {
@@ -412,9 +409,9 @@ function getWikipedia() {
       q: countryName,
     },
     success: function (result) {
-      $("#wikipedia").html(`${result["data"][0]["summary"]}`);
+      $("#wikipedia").html(`${result.data[0].summary}`);
       $("#wikiurl").html(
-        `More info: <a href='http://${result["data"][0]["wikipediaUrl"]}' target="_blank" class="customA">${result["data"][0]["wikipediaUrl"]} </a>`
+        `More info: <a href='http://${result.data[0].wikipediaUrl}' target="_blank" class="customA">${result.data[0].wikipediaUrl} </a>`
       );
     },
     error: function (jqXHR, textStatus, errorThrown) {
@@ -432,7 +429,6 @@ function getPhotos() {
       q: countryName,
     },
     success: function (result) {
-      dataDump = result;
       markup = "";
       $("#carousel-deck .carousel-inner").html("");
       for (let i = 0; i < result.data.photos.length; i++) {

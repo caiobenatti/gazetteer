@@ -9,6 +9,7 @@
       href="./libs/misc/favicon-png.png"
       type="image/x-icon"
     />
+
     <!-- Custom CSS -->
     <link rel="stylesheet" href="./libs/css/style.css" />
     <!-- fontawsome CSS -->
@@ -55,6 +56,8 @@
 
   </head>
   <body>
+    <!-- Div with Loading image -->
+    
     <!-- </nav> -->
     <nav class="navbar sticky-top navbar-light">
       <a
@@ -228,10 +231,15 @@
     </div>
 
     <!-- show the map -->
+    <div id="Loading">
+      <img id="loading" src="./libs/misc/Preloader.gif" alt="Loading...">
+    </div>
     <div id="mapid"></div>
 
     <!-- import jQuery -->
     <script src="./libs/js/jquery-3.5.1.min.js"></script>
+
+
 
     <!-- import popper -->
     <script
@@ -257,5 +265,12 @@
 
     <!-- functions -->
     <script src="./libs/js/script.js"></script>
+
+        <!-- jQuery for loading image -->
+    <script>
+       $(window).on('load' , function() {
+       $('#loading').hide();
+      });
+      </script>
   </body>
 </html>

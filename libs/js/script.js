@@ -32,9 +32,9 @@ let landMarkIcon = L.icon({
 //Getting users lat/long
 if (navigator.geolocation) {
   navigator.geolocation.getCurrentPosition(function (position) {
-    //Create query for the API.
     let latitude = "latitude=" + position.coords.latitude;
     let longitude = "&longitude=" + position.coords.longitude;
+    //Create query for the API.
     let query = latitude + longitude + "&localityLanguage=en";
 
     const Http = new XMLHttpRequest();
@@ -177,12 +177,16 @@ L.easyButton(
   "Remove Markers"
 ).addTo(mymap);
 
+// Changes on country selection
+$("#countries").change(function () {
+  getCountry($("#countries").val());
+});
+
 // Set all the country info
 function setCountryInfo(result) {
   capital = result.data[0].capital;
   currency = result.data[0].currencies[0].code;
   countryName = result.data[0].name.replace(/\s/g, "+");
-  // countryName = countryName.replace(/\s/g, "+");
   geoNameID = result.data[0].geonameId;
   iso2 = result.data[0].alpha2Code;
   $("#capital").html(capital);
@@ -215,10 +219,7 @@ function setCountryInfo(result) {
   $("#timeZone").append(`<span> ${tz}</span>`);
 }
 
-// Changes on country selection
-$("#countries").change(function () {
-  getCountry($("#countries").val());
-});
+//Function for APIS
 
 function getCountry(country) {
   $.ajax({
@@ -237,13 +238,11 @@ function getCountry(country) {
         applyCountryBorder(country);
       }
     },
-    error: function (jqXHR, textStatus, errorThrown) {
-      alert(`${textStatus} ${errorThrown}`);
+    error: function (textStatus, errorThrown) {
+      console.log(`${textStatus} ${errorThrown}`);
     },
   });
 }
-
-//Function for APIS
 
 //apply the borders on the map and move the map to new location
 function applyCountryBorder(iso2) {
@@ -271,6 +270,9 @@ function applyCountryBorder(iso2) {
         getWikipedia();
         getExchangeRateData();
       }
+    },
+    error: function (textStatus, errorThrown) {
+      console.log(`${textStatus} ${errorThrown}`);
     },
   });
 }
@@ -304,6 +306,9 @@ function addPOI() {
         mymap.addLayer(markers);
       }
     },
+    error: function (textStatus, errorThrown) {
+      console.log(`${textStatus} ${errorThrown}`);
+    },
   });
 }
 
@@ -331,8 +336,8 @@ function getExchangeRateData() {
         updateChart();
       }
     },
-    error: function (jqXHR, textStatus, errorThrown) {
-      alert(`Error in exchange: ${textStatus} ${errorThrown} ${jqXHR}`);
+    error: function (textStatus, errorThrown) {
+      console.log(`Error in exchange: ${textStatus} ${errorThrown}`);
     },
   });
 }
@@ -394,8 +399,8 @@ function getWeatherData() {
         updateMarker(result.data.lat, result.data.lon);
       }
     },
-    error: function (jqXHR, textStatus, errorThrown) {
-      console.log(textStatus, errorThrown, jqXHR);
+    error: function (textStatus, errorThrown) {
+      console.log(textStatus, errorThrown);
     },
   });
 }
@@ -414,8 +419,8 @@ function getWikipedia() {
         `More info: <a href='http://${result.data[0].wikipediaUrl}' target="_blank" class="customA">${result.data[0].wikipediaUrl} </a>`
       );
     },
-    error: function (jqXHR, textStatus, errorThrown) {
-      console.log(textStatus, errorThrown, jqXHR);
+    error: function (textStatus, errorThrown) {
+      console.log(textStatus, errorThrown);
     },
   });
 }
@@ -449,8 +454,8 @@ function getPhotos() {
         interval: false,
       });
     },
-    error: function (jqXHR, textStatus, errorThrown) {
-      console.log(textStatus, errorThrown, jqXHR);
+    error: function (textStatus, errorThrown) {
+      console.log(textStatus, errorThrown);
     },
   });
 }

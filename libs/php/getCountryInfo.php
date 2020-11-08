@@ -2,7 +2,6 @@
 
 $executionStartTime = microtime(true) / 1000;
 
-//$url = 'http://api.geonames.org/countryInfoJSON?formatted=true&lang=' . $_REQUEST['lang'] . '&country=' . $_REQUEST['country'] . '&username=cbenatti';
 $url = 'https://restcountries.eu/rest/v2/name/' . $_REQUEST['country'];
 
 $ch = curl_init();
